@@ -20,8 +20,8 @@ def init_game(name_level, map_level):
     screen.addshape(wall_hard)
     image_princess = "princess.gif"
     screen.addshape(image_princess)
-    image_logo_teky = "logo_teky.gif"
-    screen.addshape(image_logo_teky)
+    image_logo = "logo.gif"
+    screen.addshape(image_logo)
     left = "dog_left.gif"
     screen.addshape(left)
     right = "dog_right.gif"
@@ -52,12 +52,12 @@ def init_game(name_level, map_level):
         turtle.write("HP: {0}".format(hp), font=style, align='center')
         turtle.hideturtle()
 
-    #create logo teky
-    class LogoTeky(turtle.Turtle):
+    #create logo blindoff
+    class LogoBlindoff(turtle.Turtle):
 
         def __init__(self):
             turtle.Turtle.__init__(self)
-            self.shape(image_logo_teky)
+            self.shape(image_logo)
             self.penup()
             self.goto(-420, 330)
             self.onclick(self.main)
@@ -127,6 +127,25 @@ def init_game(name_level, map_level):
                 return True
             else:
                 return False
+
+    class RandomAgent(turtle.Turtle):
+        def __init__(self):
+            turtle.Turtle.__init__(self)
+            self.actions_size = 4
+        
+        def get_action(self):
+            return random.choice(range(self.actions_size))
+
+        def make_action(self, player):
+            action = self.get_action()
+            if(action == 0):
+                player.up()
+            if(action == 1):
+                player.down()
+            if(action == 2):
+                player.right()
+            if(action == 3):
+                player.left()
 
     #create treasure
     class Treasure(turtle.Turtle):
@@ -232,14 +251,15 @@ def init_game(name_level, map_level):
     pen = Pen()
     player = Player()
     princess = Princess()
-    logo_teky = LogoTeky()
+    logo = LogoBlindoff()
+    randomAgent = RandomAgent()
 
     #keyboard bindding
-    turtle.listen()
-    turtle.onkey(player.up, "Up")
-    turtle.onkey(player.down, "Down")
-    turtle.onkey(player.right, "Right")
-    turtle.onkey(player.left, "Left")
+    #turtle.listen()
+    #turtle.onkey(player.up, "Up")
+    #turtle.onkey(player.down, "Down")
+    #turtle.onkey(player.right, "Right")
+    #turtle.onkey(player.left, "Left")
 
     #set up level
     setup_maze(map_level)
@@ -249,6 +269,7 @@ def init_game(name_level, map_level):
         turtle.ontimer(monster.move, 250)
 
     while True:
+        randomAgent.make_action(player)
         for treasure in treasures:
             if player.is_collision(treasure):
                 player.hp += treasure.hp

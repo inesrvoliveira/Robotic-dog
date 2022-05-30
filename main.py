@@ -136,7 +136,7 @@ def main():
     level_hard = Level(hard, -220)
 
     screen.bgpic("introduction.png")
-    screen.title("Maze Game")
+    screen.title("Blindoff")
     screen.setup(1000, 740)
     screen.tracer(0)
 
