@@ -22,13 +22,13 @@ def init_game(name_level, map_level):
     screen.addshape(image_princess)
     image_logo_teky = "logo_teky.gif"
     screen.addshape(image_logo_teky)
-    left = "left.gif"
+    left = "dog_left.gif"
     screen.addshape(left)
-    right = "right.gif"
+    right = "dog_right.gif"
     screen.addshape(right)
-    top = "top.gif"
+    top = "dog_top.gif"
     screen.addshape(top)
-    bottom = "bottom.gif"
+    bottom = "dog_bottom.gif"
     screen.addshape(bottom)
     image_monsters = ["monster_0.gif", "monster_1.gif", "monster_2.gif", "monster_3.gif", "monster_4.gif"]
     for i in range(5):
