@@ -97,14 +97,14 @@ def main():
     screen = turtle.Screen()
     screen.tracer(0)
 
-    time.sleep(5)
-
     easy = "easy.gif"
     medium = "medium.gif"
     hard = "hard.gif"
+    exit = "exit.gif"
     screen.addshape(easy)
     screen.addshape(medium)
     screen.addshape(hard)
+    screen.addshape(exit)
 
     # create level
     class Level(turtle.Turtle):
@@ -126,19 +126,26 @@ def main():
             elif self.level == "medium.gif":
                 turtle.clearscreen()
                 game_easy.init_game("medium", map_medium)
-            else:
+            elif self.level == "hard.gif":
                 turtle.clearscreen()
                 game_easy.init_game("hard", map_hard)
+            else: #exit
+                turtle.bye()
+
 
     # add level
-    level_easy = Level(easy, -120)
-    level_medium = Level(medium, -170)
-    level_hard = Level(hard, -220)
+    level_easy = Level(easy, 20)
+    level_medium = Level(medium, -50)
+    level_hard = Level(hard, -120)
+    level_exit = Level(exit, -190)
 
-    screen.bgpic("introduction.png")
+    screen.bgpic("menu.png")
     screen.title("Blindoff")
-    screen.setup(1000, 740)
+    screen.setup(1024, 740)
     screen.tracer(0)
+
+    #screen.listen()
+    time.sleep(3)
 
 
 main()
