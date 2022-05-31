@@ -13,11 +13,11 @@ def init_game(name_level, map_level):
         screen.tracer(0)
 
         #register shape
-        wall_easy = "wall_easy.gif"
+        wall_easy = "grass1.gif"
         screen.addshape(wall_easy)
-        wall_medium = "wall_medium.gif"
+        wall_medium = "grass2.gif"
         screen.addshape(wall_medium)
-        wall_hard = "wall_hard.gif"
+        wall_hard = "grass3.gif"
         screen.addshape(wall_hard)
         image_bones = "bones.gif"
         screen.addshape(image_bones)
@@ -31,9 +31,9 @@ def init_game(name_level, map_level):
         screen.addshape(top)
         bottom = "dog_bottom.gif"
         screen.addshape(bottom)
-        image_monsters = ["monster_0.gif", "monster_1.gif", "monster_2.gif", "monster_3.gif", "monster_4.gif"]
-        for i in range(5):
-            screen.addshape(image_monsters[i])
+        image_people = ["people_bottom.gif", "people_right.gif", "people_left.gif", "people_top.gif"]
+        for i in range(4):
+            screen.addshape(image_people[i])
         image_treasures = ["treasure_0.gif", "treasure_1.gif", "treasure_2.gif", "treasure_3.gif", "treasure_4.gif"]
         for i in range(5):
             screen.addshape(image_treasures[i])
@@ -159,7 +159,7 @@ def init_game(name_level, map_level):
                 self.hideturtle()
             
             def get_action(self, player):
-                
+
                 return 
 
             def make_action(self, player):
@@ -212,14 +212,8 @@ def init_game(name_level, map_level):
             
             def __init__(self, x, y):
                 turtle.Turtle.__init__(self)
-                if name_level == "easy":
-                    self.number_random = random.randint(0, 1)
-                elif name_level == "medium":
-                    self.number_random = random.randint(0, 2)
-                else:
-                    self.number_random = random.randint(3, 4)
-                self.shape(image_monsters[self.number_random])
-                self.hp = -(self.number_random + 1) * 100
+                self.shape(image_people[0])
+                self.hp = -200
                 self.penup()
                 self.speed(0)
                 self.gold = -25
@@ -228,15 +222,19 @@ def init_game(name_level, map_level):
 
             def move(self):
                 if self.direction == "up":
+                    self.shape(image_people[3])
                     x = 0
                     y = 24
                 elif self.direction == "down":
+                    self.shape(image_people[0])
                     x = 0
                     y = -24
                 elif self.direction == "left":
+                    self.shape(image_people[2])
                     x = -24
                     y = 0
                 elif self.direction == "right":
+                    self.shape(image_people[1])
                     x = 24
                     y = 0
                 move_to_x = self.xcor() + x
