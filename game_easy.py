@@ -37,11 +37,19 @@ def init_game(name_level, map_level):
         image_treasures = ["treasure_0.gif", "treasure_1.gif", "treasure_2.gif", "treasure_3.gif", "treasure_4.gif"]
         for i in range(5):
             screen.addshape(image_treasures[i])
+        image_buttons = ["door_button.gif","door_button_activated.gif"]
+        for i in range(2):
+            screen.addshape(image_buttons[i])
+        image_doors = ["closed_door.gif","opened_door.gif"]
+        for i in range(2):
+            screen.addshape(image_doors[i])
         
         # create list
         walls = []
         treasures = []
         monsters = []
+        buttons = []
+        doors = []
 
         #show hp
         def show_hp(hp):
@@ -207,6 +215,49 @@ def init_game(name_level, map_level):
                 self.goto(2000, 2000)
                 self.hideturtle()
 
+        #create buttons
+        class Button(turtle.Turtle):
+            
+            def __init__(self,x,y):
+                turtle.Turtle.__init__(self)
+                self.shape(image_buttons[0])
+                self.penup()
+                self.speed(0)
+                self.goto(x, y)
+
+            def change_button(player):
+                if(player.is_collision(self)):
+                    self.shape(image_buttons[1])
+
+            def destroy(self):
+                self.goto(2000, 2000)
+                self.hideturtle()
+
+        #create buttons
+        class Door(turtle.Turtle):
+            
+            def __init__(self,direction,x,y):
+                turtle.Turtle.__init__(self)
+                self.penup()
+                self.speed(0)
+                self.goto(x, y)
+                self.direction = direction
+                if(direction == "V"):  #vertical
+                    self.shape(image_doors[0])
+                else:   #horizontal
+                    self.shape(image_doors[1])
+
+            def opens():
+                if(self.direction == "V"):  #vertical
+                    self.shape(image_buttons[1])
+                else:
+                    self.shape(image_buttons[0])
+
+            def destroy(self):
+                self.goto(2000, 2000)
+                self.hideturtle()
+
+
         #class monster
         class Monster(turtle.Turtle):
             
@@ -270,6 +321,12 @@ def init_game(name_level, map_level):
                     elif character == "H":
                         bones.goto(position_x, position_y)
                         bones.stamp()
+                    elif character == "B":
+                        buttons.append(Button(position_x, position_y))
+                    elif character == "D":
+                        doors.append(Door("V",position_x, position_y))
+                    elif character == "A":
+                        doors.append(Door("H",position_x, position_y))
 
         #create instance
         pen = Pen()
