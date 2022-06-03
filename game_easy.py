@@ -3,9 +3,10 @@ import turtle
 import math
 import random
 import main
+import time
 
 def init_game(name_level, map_level):
-    try:
+    #try:
         screen = turtle.Screen()
         screen.bgcolor("black")
         screen.title("Blindoff")
@@ -40,16 +41,18 @@ def init_game(name_level, map_level):
         image_buttons = ["door_button.gif","door_button_activated.gif"]
         for i in range(2):
             screen.addshape(image_buttons[i])
-        image_doors = ["closed_door.gif","opened_door.gif"]
-        for i in range(2):
+        image_doors = ["closed_door.gif","opened_door.gif", "opened_door2.gif"]
+        for i in range(3):
             screen.addshape(image_doors[i])
         
         # create list
         walls = []
         treasures = []
-        monsters = []
+        persons = []
         buttons = []
         doors = []
+        buttons_pos = []
+        doors_pos = []
 
         #show hp
         def show_hp(hp):
@@ -89,6 +92,20 @@ def init_game(name_level, map_level):
                 self.penup()
                 self.speed(0)
 
+        def can_move(move_to_x, move_to_y, player):
+            if (move_to_x, move_to_y) not in walls and (move_to_x, move_to_y) not in doors_pos:
+                player.goto(move_to_x, move_to_y)
+                return True
+            elif (move_to_x, move_to_y) in doors_pos:
+                i = doors_pos.index((move_to_x, move_to_y))
+                if not doors[i].is_closed:
+                    player.goto(move_to_x, move_to_y)
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
         #create player
         class Player(turtle.Turtle):
             
@@ -104,29 +121,25 @@ def init_game(name_level, map_level):
                 self.shape(top)
                 move_to_x = self.xcor()
                 move_to_y = self.ycor() + 24
-                if (move_to_x, move_to_y) not in walls:
-                    self.goto(move_to_x, move_to_y)
+                can_move(move_to_x, move_to_y, self)
 
             def down(self):
                 self.shape(bottom)
                 move_to_x = self.xcor()
                 move_to_y = self.ycor() - 24
-                if (move_to_x, move_to_y) not in walls:
-                    self.goto(move_to_x, move_to_y)
+                can_move(move_to_x, move_to_y, self)
 
             def left(self):
                 self.shape(left)
                 move_to_x = self.xcor() - 24
                 move_to_y = self.ycor()
-                if (move_to_x, move_to_y) not in walls:
-                    self.goto(move_to_x, move_to_y)
+                can_move(move_to_x, move_to_y, self)
 
             def right(self):
                 self.shape(right)
                 move_to_x = self.xcor() + 24
                 move_to_y = self.ycor()
-                if (move_to_x, move_to_y) not in walls:
-                    self.goto(move_to_x, move_to_y)
+                can_move(move_to_x, move_to_y, self)
 
             def is_collision(self, other):
                 a = self.xcor() - other.xcor()
@@ -225,9 +238,8 @@ def init_game(name_level, map_level):
                 self.speed(0)
                 self.goto(x, y)
 
-            def change_button(player):
-                if(player.is_collision(self)):
-                    self.shape(image_buttons[1])
+            def change_button(self):
+                self.shape(image_buttons[1])
 
             def destroy(self):
                 self.goto(2000, 2000)
@@ -241,25 +253,30 @@ def init_game(name_level, map_level):
                 self.penup()
                 self.speed(0)
                 self.goto(x, y)
+                self.x = x
+                self.y = y
+                self.is_closed = True
                 self.direction = direction
+
                 if(direction == "V"):  #vertical
                     self.shape(image_doors[0])
-                else:   #horizontal
-                    self.shape(image_doors[1])
+                else:                  #horizontal
+                    self.shape(image_doors[2])
 
-            def opens():
+            def opens(self):
+                self.is_closed = False
                 if(self.direction == "V"):  #vertical
-                    self.shape(image_buttons[1])
+                    self.shape(image_doors[1])
                 else:
-                    self.shape(image_buttons[0])
+                    self.shape(image_doors[0])
 
             def destroy(self):
                 self.goto(2000, 2000)
                 self.hideturtle()
 
 
-        #class monster
-        class Monster(turtle.Turtle):
+        #class person
+        class Person(turtle.Turtle):
             
             def __init__(self, x, y):
                 turtle.Turtle.__init__(self)
@@ -291,9 +308,7 @@ def init_game(name_level, map_level):
                 move_to_x = self.xcor() + x
                 move_to_y = self.ycor() + y
 
-                if (move_to_x, move_to_y) not in walls:
-                    self.goto(move_to_x, move_to_y)
-                else:
+                if not can_move(move_to_x, move_to_y, self):
                     self.direction = random.choice(["up", "down", "left", "right"])
                 turtle.ontimer(self.move, t = random.randint(100, 300))
 
@@ -317,16 +332,19 @@ def init_game(name_level, map_level):
                     elif character == "T":
                         treasures.append(Treasure(position_x, position_y))
                     elif character == "E":
-                        monsters.append(Monster(position_x, position_y))
+                        persons.append(Person(position_x, position_y))
                     elif character == "H":
                         bones.goto(position_x, position_y)
                         bones.stamp()
                     elif character == "B":
                         buttons.append(Button(position_x, position_y))
+                        buttons_pos.append((position_x, position_y))
                     elif character == "D":
                         doors.append(Door("V",position_x, position_y))
+                        doors_pos.append((position_x, position_y))
                     elif character == "A":
                         doors.append(Door("H",position_x, position_y))
+                        doors_pos.append((position_x, position_y))
 
         #create instance
         pen = Pen()
@@ -336,21 +354,31 @@ def init_game(name_level, map_level):
         randomAgent = RandomAgent()
 
         #keyboard bindding
-        #turtle.listen()
-        #turtle.onkey(player.up, "Up")
-        #turtle.onkey(player.down, "Down")
-        #turtle.onkey(player.right, "Right")
-        #turtle.onkey(player.left, "Left")
+        turtle.listen()
+        turtle.onkey(player.up, "Up")
+        turtle.onkey(player.down, "Down")
+        turtle.onkey(player.right, "Right")
+        turtle.onkey(player.left, "Left")
 
         #set up level
         setup_maze(map_level)
 
-        #run monster
-        for monster in monsters:
-            turtle.ontimer(monster.move, 250)
+        #run person
+        for person in persons:
+            turtle.ontimer(person.move, 250)
 
         while True:
-            randomAgent.make_action(player)
+            #randomAgent.make_action(player)
+
+            for i in range(len(buttons)):
+                c=0
+                button = buttons[i]
+                if player.is_collision(button):
+                    c+=1
+                    print("estou em cima do button")
+                    print(c)
+                    button.change_button()
+                    doors[i].opens()
 
             for treasure in treasures:
                 if player.is_collision(treasure):
@@ -358,12 +386,12 @@ def init_game(name_level, map_level):
                     show_hp(player.hp)
                     treasure.destroy()
                     treasures.remove(treasure)
-            for monster in monsters:
-                if player.is_collision(monster):
-                    player.hp += monster.hp
+            for person in persons:
+                if player.is_collision(person):
+                    player.hp += person.hp
                     show_hp(player.hp)
-                    monster.destroy()
-                    monsters.remove(monster)
+                    person.destroy()
+                    persons.remove(person)
                     if player.hp <= 0:
                         turtle.clearscreen()
                         turtle.color('red')
@@ -383,13 +411,15 @@ def init_game(name_level, map_level):
                 style = ('Courier', 24, 'italic')
                 turtle.write('You are winner!', font=style, align='center')
                 turtle.hideturtle()
+                time.sleep(4)
+                turtle.clearscreen()
                 main.main()
                 turtle.done()
                 break
             screen.update()
-    except:
+    #except:
         #to avoid the erro from trying to update a screen that has already been destroyed
-        print("The screen is dead.")
+        #print("The screen is dead.")
               
 
   
