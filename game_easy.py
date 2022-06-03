@@ -55,6 +55,10 @@ def init_game(name_level, map_level):
         image_semaphore = ["red.gif", "green.gif"]
         for i in range(2):
             screen.addshape(image_semaphore[i])
+
+        image_cars = ["car1_esq.gif", "car2_esq.gif", "car2_dir.gif", "car1_dir.gif"]
+        for i in range(4):
+            screen.addshape(image_cars[i])
         
         # create list
         walls = []
@@ -68,6 +72,8 @@ def init_game(name_level, map_level):
         sideroads = []
         crossroads = []
         semaphores = []
+        side_pos = []
+        cars = []
 
         #show hp
         def show_hp(hp):
@@ -110,10 +116,20 @@ def init_game(name_level, map_level):
                 self.penup()
                 self.speed(0)
 
-        def can_move(move_to_x, move_to_y, player):
-            if (move_to_x, move_to_y) not in walls and (move_to_x, move_to_y) not in doors_pos:
-                player.goto(move_to_x, move_to_y)
-                return True
+        def is_edge_space(move_to_x, move_to_y):
+            return (move_to_x, move_to_y) == (-480,24) or (move_to_x, move_to_y) == (-480,-144) or (move_to_x, move_to_y) == (480,-144) or (move_to_x, move_to_y) == (480,24)
+
+        def can_move(move_to_x, move_to_y, player, isPerson):
+            if (move_to_x, move_to_y) not in walls and (move_to_x, move_to_y) not in doors_pos and not is_edge_space(move_to_x, move_to_y) :
+                if isPerson:
+                    if (move_to_x, move_to_y) not in side_pos:
+                        player.goto(move_to_x, move_to_y)
+                        return True  
+                    else:
+                        return False
+                else:
+                    player.goto(move_to_x, move_to_y)
+                    return True
             elif (move_to_x, move_to_y) in doors_pos:
                 i = doors_pos.index((move_to_x, move_to_y))
                 if not doors[i].is_closed:
@@ -139,25 +155,25 @@ def init_game(name_level, map_level):
                 self.shape(top)
                 move_to_x = self.xcor()
                 move_to_y = self.ycor() + 24
-                can_move(move_to_x, move_to_y, self)
+                can_move(move_to_x, move_to_y, self, False)
 
             def down(self):
                 self.shape(bottom)
                 move_to_x = self.xcor()
                 move_to_y = self.ycor() - 24
-                can_move(move_to_x, move_to_y, self)
-
+                can_move(move_to_x, move_to_y, self, False)
+                
             def left(self):
                 self.shape(left)
                 move_to_x = self.xcor() - 24
                 move_to_y = self.ycor()
-                can_move(move_to_x, move_to_y, self)
-
+                can_move(move_to_x, move_to_y, self, False)
+                
             def right(self):
                 self.shape(right)
                 move_to_x = self.xcor() + 24
                 move_to_y = self.ycor()
-                can_move(move_to_x, move_to_y, self)
+                can_move(move_to_x, move_to_y, self, False)
 
             def is_collision(self, other):
                 a = self.xcor() - other.xcor()
@@ -311,6 +327,49 @@ def init_game(name_level, map_level):
                 self.goto(2000, 2000)
                 self.hideturtle()
 
+        #create car
+        class Car(turtle.Turtle):
+            
+            def __init__(self,x,y,i):
+                turtle.Turtle.__init__(self)
+                self.shape(image_cars[i])
+                self.penup()
+                self.speed(0)
+                self.goto(x, y)
+                if i < 2:
+                    self.direction = "left"
+                else:
+                    self.direction = "right"
+            
+            def move_cars(self):
+                if ((self.xcor(),self.ycor()) == (-480,0)):
+                    self.goto(480, 0)
+                if ((self.xcor(),self.ycor()) == (-480,-24)):
+                    self.goto(480, -24)
+                if ((self.xcor(),self.ycor()) == (-480,-48)):
+                    self.goto(480, -48)
+                if ((self.xcor(),self.ycor()) == (480,-72)):
+                    self.goto(-480, -72)
+                if ((self.xcor(),self.ycor()) == (480,-96)):
+                    self.goto(-480, -96)
+                if ((self.xcor(),self.ycor()) == (480,-120)):
+                    self.goto(-480, -120)
+
+                if self.direction == "left":
+                    x = -24
+                    y = 0
+                elif self.direction == "right":
+                    x = 24
+                    y = 0
+                move_to_x = self.xcor() + x
+                move_to_y = self.ycor() + y
+
+                self.goto(move_to_x, move_to_y)
+                turtle.ontimer(self.move_cars, t = random.randint(100, 300))
+
+            def destroy(self):
+                self.goto(2000, 2000)
+                self.hideturtle()
 
         #create buttons
         class Button(turtle.Turtle):
@@ -392,9 +451,9 @@ def init_game(name_level, map_level):
                 move_to_x = self.xcor() + x
                 move_to_y = self.ycor() + y
 
-                if not can_move(move_to_x, move_to_y, self):
+                if not can_move(move_to_x, move_to_y, self, True):
                     self.direction = random.choice(["up", "down", "left", "right"])
-                turtle.ontimer(self.move, t = random.randint(100, 300))
+                turtle.ontimer(self.move, t = random.randint(100, 500))
 
             def destroy(self):
                 self.goto(2000, 2000)
@@ -430,21 +489,34 @@ def init_game(name_level, map_level):
                         roads.append(Road(position_x, position_y, False))
                     elif character == "Z":
                         sideroads.append(SideRoad(position_x, position_y))
+                        side_pos.append((position_x, position_y))
                     elif character == "Y":
                         crossroads.append(CrossRoad(position_x, position_y))
                     elif character == "S":
                         semaphores.append(Semaphore(position_x, position_y))
         
-        def setup_player_and_persons(level):
+        def setup_player_and_persons_and_cars(level):
             for y in range(len(level)):
                 for x in range(len(level[y])):
                     character = level[y][x]
                     position_x = -456 + (x * 24)
                     position_y = 288 - (y * 24)
+                    #player - dog
                     if character == "P":
                         player.goto(position_x, position_y)
+                    #people
                     elif character == "E":
                         persons.append(Person(position_x, position_y))
+                    #cars
+                    elif character == "C":
+                        cars.append(Car(position_x, position_y, 0))
+                    elif character == "V":
+                        cars.append(Car(position_x, position_y, 1))
+                    elif character == "O":
+                        cars.append(Car(position_x, position_y, 2))
+                    elif character == "G":
+                        cars.append(Car(position_x, position_y, 3))
+                    
 
         #create instance
         pen = Pen()
@@ -457,7 +529,7 @@ def init_game(name_level, map_level):
 
         player = Player()
         #set up player
-        setup_player_and_persons(map_level)
+        setup_player_and_persons_and_cars(map_level)
 
         #keyboard bindding
         turtle.listen()
@@ -469,6 +541,10 @@ def init_game(name_level, map_level):
         #run person
         for person in persons:
             turtle.ontimer(person.move, 250)
+        
+        #run cars
+        for car in cars:
+            turtle.ontimer(car.move_cars, 250)
 
         while True:
             #randomAgent.make_action(player)
