@@ -81,9 +81,6 @@ def init_game(name_level, map_level):
 
           #bring to front
        
-       #bring to front
-        def tofront(t):
-            t.forward(0)
         
         #create logo blindoff
         class LogoBlindoff(turtle.Turtle):
@@ -523,7 +520,6 @@ def init_game(name_level, map_level):
                 turtle.done()
                 break
             screen.update()
-            tofront(player)
     #except:
         #to avoid the erro from trying to update a screen that has already been destroyed
         #print("The screen is dead.")
