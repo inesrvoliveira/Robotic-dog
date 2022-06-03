@@ -44,6 +44,14 @@ def init_game(name_level, map_level):
         image_doors = ["closed_door.gif","opened_door.gif", "opened_door2.gif"]
         for i in range(3):
             screen.addshape(image_doors[i])
+        image_road = ["road.gif", "road2.gif"]
+        for i in range(2):
+            screen.addshape(image_road[i])
+        
+        sideroad = "side_road.gif"
+        screen.addshape(sideroad)
+        crossroad = "crosswalk.gif"
+        screen.addshape(crossroad)
         
         # create list
         walls = []
@@ -53,6 +61,9 @@ def init_game(name_level, map_level):
         doors = []
         buttons_pos = []
         doors_pos = []
+        roads = []
+        sideroads = []
+        crossroads = []
 
         #show hp
         def show_hp(hp):
@@ -228,6 +239,53 @@ def init_game(name_level, map_level):
                 self.goto(2000, 2000)
                 self.hideturtle()
 
+
+        #create road
+        class Road(turtle.Turtle):
+            
+            def __init__(self,x,y,risk_up):
+                turtle.Turtle.__init__(self)
+                if risk_up:
+                    self.shape(image_road[0])
+                else:
+                    self.shape(image_road[1])
+                self.penup()
+                self.speed(0)
+                self.goto(x, y)
+
+            def destroy(self):
+                self.goto(2000, 2000)
+                self.hideturtle()
+
+        #create sideroad
+        class SideRoad(turtle.Turtle):
+            
+            def __init__(self,x,y):
+                turtle.Turtle.__init__(self)
+                self.shape(sideroad)
+                self.penup()
+                self.speed(0)
+                self.goto(x, y)
+
+            def destroy(self):
+                self.goto(2000, 2000)
+                self.hideturtle()
+
+        #create crossroad
+        class CrossRoad(turtle.Turtle):
+            
+            def __init__(self,x,y):
+                turtle.Turtle.__init__(self)
+                self.shape(crossroad)
+                self.penup()
+                self.speed(0)
+                self.goto(x, y)
+
+            def destroy(self):
+                self.goto(2000, 2000)
+                self.hideturtle()
+
+
         #create buttons
         class Button(turtle.Turtle):
             
@@ -274,7 +332,7 @@ def init_game(name_level, map_level):
                 self.goto(2000, 2000)
                 self.hideturtle()
 
-
+        
         #class person
         class Person(turtle.Turtle):
             
@@ -345,6 +403,14 @@ def init_game(name_level, map_level):
                     elif character == "A":
                         doors.append(Door("H",position_x, position_y))
                         doors_pos.append((position_x, position_y))
+                    elif character == "R":
+                        roads.append(Road(position_x, position_y, True))
+                    elif character == "K":
+                        roads.append(Road(position_x, position_y, False))
+                    elif character == "Z":
+                        sideroads.append(SideRoad(position_x, position_y))
+                    elif character == "Y":
+                        crossroads.append(CrossRoad(position_x, position_y))
 
         #create instance
         pen = Pen()

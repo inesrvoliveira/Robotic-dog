@@ -75,15 +75,15 @@ map_hard = [
     "X X X X X       X XXX XXX       X X X X",
     "X X X X XXXXXXX X XXX XXXXXXXXX X X X X",
     "X X X X XXXXXXX X XXX XXXXXXXXX X X X X",
-    "X                                     X", #passadeira
-    "                                       ", 
-    "                                       ",
-    "                                       ",
-    "                                       ",
-    "                                       ",
-    "                                       ",
-    "X                                     X", #passadeira
-    "X XXXTXXX XXXX XXXXXXXXX X  TXXXX X X X",
+    "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", #passadeira
+    "KKKKKKKKKKKKKKKKKYYYKKKKKKKKKKKKKKKKKKK", 
+    "RRRRRRRRRRRRRRRRRYYYRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRYYYRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRYYYRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRYYYRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRYYYRRRRRRRRRRRRRRRRRRR",
+    "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", #passadeira
+    "X XXXTXXX XXXX XXXXXXXXXXX  TXXXX X X X",
     "X XXXXXXX XXXX XXXXXXXXXXXXXXX    X X X",
     "X XXXXXXX XXXX XXXXXXX       X XXXX X X",
     "X X     X XXXX XXXXXXX X X X X        X",
