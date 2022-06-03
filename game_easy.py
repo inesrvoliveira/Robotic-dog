@@ -52,6 +52,9 @@ def init_game(name_level, map_level):
         screen.addshape(sideroad)
         crossroad = "crosswalk.gif"
         screen.addshape(crossroad)
+        image_semaphore = ["red.gif", "green.gif"]
+        for i in range(2):
+            screen.addshape(image_semaphore[i])
         
         # create list
         walls = []
@@ -64,6 +67,7 @@ def init_game(name_level, map_level):
         roads = []
         sideroads = []
         crossroads = []
+        semaphores = []
 
         #show hp
         def show_hp(hp):
@@ -75,6 +79,12 @@ def init_game(name_level, map_level):
             turtle.write("HP: {0}".format(hp), font=style, align='center')
             turtle.hideturtle()
 
+          #bring to front
+       
+       #bring to front
+        def tofront(t):
+            t.forward(0)
+        
         #create logo blindoff
         class LogoBlindoff(turtle.Turtle):
 
@@ -239,7 +249,6 @@ def init_game(name_level, map_level):
                 self.goto(2000, 2000)
                 self.hideturtle()
 
-
         #create road
         class Road(turtle.Turtle):
             
@@ -280,6 +289,26 @@ def init_game(name_level, map_level):
                 self.penup()
                 self.speed(0)
                 self.goto(x, y)
+
+            def destroy(self):
+                self.goto(2000, 2000)
+                self.hideturtle()
+
+        #create semaphore
+        class Semaphore(turtle.Turtle):
+            
+            def __init__(self,x,y):
+                turtle.Turtle.__init__(self)
+                self.shape(image_semaphore[0])
+                self.penup()
+                self.speed(0)
+                self.goto(x, y)
+            
+            def change_to_green(self):
+                self.shape(image_semaphore[1])
+            
+            def change_to_red(self):
+                self.shape(image_semaphore[0])
 
             def destroy(self):
                 self.goto(2000, 2000)
@@ -385,15 +414,10 @@ def init_game(name_level, map_level):
                         pen.goto(position_x, position_y)
                         pen.stamp()
                         walls.append((position_x, position_y))
-                    elif character == "P":
-                        player.goto(position_x, position_y)
                     elif character == "T":
                         treasures.append(Treasure(position_x, position_y))
-                    elif character == "E":
-                        persons.append(Person(position_x, position_y))
                     elif character == "H":
                         bones.goto(position_x, position_y)
-                        bones.stamp()
                     elif character == "B":
                         buttons.append(Button(position_x, position_y))
                         buttons_pos.append((position_x, position_y))
@@ -411,13 +435,32 @@ def init_game(name_level, map_level):
                         sideroads.append(SideRoad(position_x, position_y))
                     elif character == "Y":
                         crossroads.append(CrossRoad(position_x, position_y))
+                    elif character == "S":
+                        semaphores.append(Semaphore(position_x, position_y))
+        
+        def setup_player_and_persons(level):
+            for y in range(len(level)):
+                for x in range(len(level[y])):
+                    character = level[y][x]
+                    position_x = -456 + (x * 24)
+                    position_y = 288 - (y * 24)
+                    if character == "P":
+                        player.goto(position_x, position_y)
+                    elif character == "E":
+                        persons.append(Person(position_x, position_y))
 
         #create instance
         pen = Pen()
-        player = Player()
         bones = Bones()
         logo = LogoBlindoff()
         randomAgent = RandomAgent()
+        
+        #set up level
+        setup_maze(map_level)
+
+        player = Player()
+        #set up player
+        setup_player_and_persons(map_level)
 
         #keyboard bindding
         turtle.listen()
@@ -425,9 +468,6 @@ def init_game(name_level, map_level):
         turtle.onkey(player.down, "Down")
         turtle.onkey(player.right, "Right")
         turtle.onkey(player.left, "Left")
-
-        #set up level
-        setup_maze(map_level)
 
         #run person
         for person in persons:
@@ -441,8 +481,8 @@ def init_game(name_level, map_level):
                 button = buttons[i]
                 if player.is_collision(button):
                     c+=1
-                    print("estou em cima do button")
-                    print(c)
+                    #print("estou em cima do button")
+                    #print(c)
                     button.change_button()
                     doors[i].opens()
 
@@ -483,6 +523,7 @@ def init_game(name_level, map_level):
                 turtle.done()
                 break
             screen.update()
+            tofront(player)
     #except:
         #to avoid the erro from trying to update a screen that has already been destroyed
         #print("The screen is dead.")
