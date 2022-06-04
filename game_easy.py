@@ -75,17 +75,19 @@ def init_game(name_level, map_level):
         side_pos = []
         cars = []
 
-        #show hp
-        def show_hp(hp):
+        start = time.time()
+
+        timer = 0
+
+        #show Score
+        def show_score(timer, n_steps, hp):
             turtle.clear()
             turtle.color('white')
             turtle.penup()
-            turtle.goto(380, 305)
+            turtle.goto(160, 305)
             style = ('Courier', 20, 'bold')
-            turtle.write("HP: {0}".format(hp), font=style, align='center')
+            turtle.write("Time: {0}    Steps: {1}    Score: {2}".format(timer, n_steps, hp), font=style, align='center')
             turtle.hideturtle()
-
-          #bring to front
        
         
         #create logo blindoff
@@ -149,35 +151,40 @@ def init_game(name_level, map_level):
                 self.penup()
                 self.speed(0)
                 self.hp = 500
-                show_hp(self.hp)
+                self.n_steps = 0
+                show_score(timer, self.n_steps, self.hp)
 
             def up(self):
                 self.shape(top)
                 move_to_x = self.xcor()
                 move_to_y = self.ycor() + 24
                 can_move(move_to_x, move_to_y, self, False)
+                self.n_steps += 1
+                show_score(timer, self.n_steps, self.hp)
 
             def down(self):
                 self.shape(bottom)
                 move_to_x = self.xcor()
                 move_to_y = self.ycor() - 24
                 can_move(move_to_x, move_to_y, self, False)
+                self.n_steps += 1
+                show_score(timer, self.n_steps, self.hp)
                 
             def left(self):
                 self.shape(left)
                 move_to_x = self.xcor() - 24
                 move_to_y = self.ycor()
                 can_move(move_to_x, move_to_y, self, False)
-                print((move_to_x, move_to_y))
-                print("left")
+                self.n_steps += 1
+                show_score(timer, self.n_steps, self.hp)
                 
             def right(self):
                 self.shape(right)
                 move_to_x = self.xcor() + 24
                 move_to_y = self.ycor()
                 can_move(move_to_x, move_to_y, self, False)
-                print((move_to_x, move_to_y))
-                print("right")
+                self.n_steps += 1
+                show_score(timer, self.n_steps, self.hp)
 
             def is_collision(self, other):
                 a = self.xcor() - other.xcor()
@@ -575,6 +582,9 @@ def init_game(name_level, map_level):
 
         while True:
             #randomAgent.make_action(player)
+            
+            timer = int(time.time()) - int(start)
+            show_score(timer, player.n_steps, player.hp)
 
             for i in range(len(buttons)):
                 c=0
@@ -589,13 +599,13 @@ def init_game(name_level, map_level):
             for treasure in treasures:
                 if player.is_collision(treasure):
                     player.hp += treasure.hp
-                    show_hp(player.hp)
+                    show_score(timer, player.n_steps, player.hp)
                     treasure.destroy()
                     treasures.remove(treasure)
             for person in persons:
                 if player.is_collision(person):
                     player.hp += person.hp
-                    show_hp(player.hp)
+                    show_score(timer, player.n_steps ,player.hp)
                     person.destroy()
                     persons.remove(person)
                     if player.hp <= 0:

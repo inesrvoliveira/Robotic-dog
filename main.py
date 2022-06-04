@@ -66,9 +66,9 @@ map_medium = [
 map_hard = [
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "XP     XT   X     X    XT       XT    X",
-    "X X XX     EX XXX X XX         EX XXXXX",
+    "X X XXE    EX XXX X XX         EX XXXXX",
     "X X XXXXXXX X XXX X  X XXXXXXXX      EX",
-    "X XXXE    X X   X XX X X        XXXXX X",
+    "X XXX     X X   X XX X X        XXXXX X",
     "X X   XXX X XXX X    X XXXXXXXX X     X",
     "X X XXXXX X     XXXXXX  X       X XXXXX",
     "X X XE TX XXXXXXX       X XXXXXXX X   X",
