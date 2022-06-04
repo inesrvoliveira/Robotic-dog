@@ -580,6 +580,34 @@ def init_game(name_level, map_level):
         for sem in semaphores:
             turtle.ontimer(sem.change, 550)
 
+        def player_dead():
+            turtle.clearscreen()
+            turtle.color('red')
+            turtle.penup()
+            turtle.goto(0, -45)
+            style = ('Courier', 24, 'italic')
+            turtle.write('You died! Play again', font=style, align='center')
+            turtle.hideturtle()
+            time.sleep(4)
+            turtle.clearscreen()
+            main.main()
+            turtle.done()
+        
+        def player_win():
+            turtle.clearscreen()
+            turtle.color('blue')
+            turtle.penup()
+            turtle.goto(0, -45)
+            style = ('Courier', 24, 'italic')
+            turtle.write('You are winner!', font=style, align='center')
+            turtle.hideturtle()
+            time.sleep(4)
+            turtle.clearscreen()
+            main.main()
+            turtle.done()
+
+         
+
         while True:
             #randomAgent.make_action(player)
             
@@ -595,13 +623,19 @@ def init_game(name_level, map_level):
                     #print(c)
                     button.change_button()
                     doors[i].opens()
-
+            
+            for car in cars:
+                if player.is_collision(car):
+                    player_dead()
+                    break
+            
             for treasure in treasures:
                 if player.is_collision(treasure):
                     player.hp += treasure.hp
                     show_score(timer, player.n_steps, player.hp)
                     treasure.destroy()
                     treasures.remove(treasure)
+
             for person in persons:
                 if player.is_collision(person):
                     player.hp += person.hp
@@ -609,29 +643,13 @@ def init_game(name_level, map_level):
                     person.destroy()
                     persons.remove(person)
                     if player.hp <= 0:
-                        turtle.clearscreen()
-                        turtle.color('red')
-                        turtle.penup()
-                        turtle.goto(0, -45)
-                        style = ('Courier', 24, 'italic')
-                        turtle.write('You died! Play again', font=style, align='center')
-                        turtle.hideturtle()
-                        main.main()
-                        turtle.done()
+                        player_dead()
                         break
+                    
             if player.is_collision(bones) and len(treasures) == 0:
-                turtle.clearscreen()
-                turtle.color('blue')
-                turtle.penup()
-                turtle.goto(0, -45)
-                style = ('Courier', 24, 'italic')
-                turtle.write('You are winner!', font=style, align='center')
-                turtle.hideturtle()
-                time.sleep(4)
-                turtle.clearscreen()
-                main.main()
-                turtle.done()
+                player_win()
                 break
+            
             screen.update()
     #except:
         #to avoid the erro from trying to update a screen that has already been destroyed
