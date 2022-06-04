@@ -168,12 +168,16 @@ def init_game(name_level, map_level):
                 move_to_x = self.xcor() - 24
                 move_to_y = self.ycor()
                 can_move(move_to_x, move_to_y, self, False)
+                print((move_to_x, move_to_y))
+                print("left")
                 
             def right(self):
                 self.shape(right)
                 move_to_x = self.xcor() + 24
                 move_to_y = self.ycor()
                 can_move(move_to_x, move_to_y, self, False)
+                print((move_to_x, move_to_y))
+                print("right")
 
             def is_collision(self, other):
                 a = self.xcor() - other.xcor()
@@ -316,12 +320,19 @@ def init_game(name_level, map_level):
                 self.penup()
                 self.speed(0)
                 self.goto(x, y)
+                self.image = 0
             
-            def change_to_green(self):
-                self.shape(image_semaphore[1])
-            
-            def change_to_red(self):
-                self.shape(image_semaphore[0])
+            def change(self):
+                #red
+                if self.image == 0:
+                    self.shape(image_semaphore[1])
+                    self.image = 1
+                #green
+                else:
+                    self.shape(image_semaphore[0])
+                    self.image = 0
+                
+                turtle.ontimer(self.change, 3500)
 
             def destroy(self):
                 self.goto(2000, 2000)
@@ -363,9 +374,21 @@ def init_game(name_level, map_level):
                     y = 0
                 move_to_x = self.xcor() + x
                 move_to_y = self.ycor() + y
+                
+                #semaphore red
+                if semaphores[0].image == 0:
+                    self.goto(move_to_x, move_to_y)
+                
+                #semaphore green
+                else:
+                    if self.xcor()>=-48 and self.xcor()<=24 and self.direction == "left":
+                        self.goto(24, self.ycor())
+                    elif self.xcor()>=-72 and self.xcor()<=0 and self.direction == "right":
+                        self.goto(-72, self.ycor())
+                    else:
+                        self.goto(move_to_x, move_to_y)
 
-                self.goto(move_to_x, move_to_y)
-                turtle.ontimer(self.move_cars, t = random.randint(100, 300))
+                turtle.ontimer(self.move_cars, t = random.randint(100, 500))
 
             def destroy(self):
                 self.goto(2000, 2000)
@@ -545,6 +568,10 @@ def init_game(name_level, map_level):
         #run cars
         for car in cars:
             turtle.ontimer(car.move_cars, 250)
+        
+        #run semaphore
+        for sem in semaphores:
+            turtle.ontimer(sem.change, 550)
 
         while True:
             #randomAgent.make_action(player)
