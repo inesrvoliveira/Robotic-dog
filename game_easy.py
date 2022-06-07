@@ -4,6 +4,7 @@ import math
 import random
 import main
 import time
+import agents
 
 def init_game(name_level, map_level):
     #try:
@@ -194,50 +195,6 @@ def init_game(name_level, map_level):
                     return True
                 else:
                     return False
-
-        class RandomAgent(turtle.Turtle):
-            def __init__(self):
-                turtle.Turtle.__init__(self)
-                self.actions_size = 4
-                self.penup()
-                self.goto(2000, 2000)
-                self.hideturtle()
-            
-            def get_action(self):
-                return random.choice(range(self.actions_size))
-
-            def make_action(self, player):
-                action = self.get_action()
-                if(action == 0):
-                    player.up()
-                if(action == 1):
-                    player.down()
-                if(action == 2):
-                    player.right()
-                if(action == 3):
-                    player.left()
-        class SmartAgent(turtle.Turtle):
-            def __init__(self):
-                turtle.Turtle.__init__(self)
-                self.actions_size = 4
-                self.penup()
-                self.goto(2000, 2000)
-                self.hideturtle()
-            
-            def get_action(self, player):
-
-                return 
-
-            def make_action(self, player):
-                action = self.get_action()
-                if(action == 0):
-                    player.up()
-                if(action == 1):
-                    player.down()
-                if(action == 2):
-                    player.right()
-                if(action == 3):
-                    player.left()
 
         #create treasure
         class Treasure(turtle.Turtle):
@@ -447,7 +404,6 @@ def init_game(name_level, map_level):
                 self.goto(2000, 2000)
                 self.hideturtle()
 
-        
         #class person
         class Person(turtle.Turtle):
             
@@ -546,13 +502,12 @@ def init_game(name_level, map_level):
                         cars.append(Car(position_x, position_y, 2))
                     elif character == "G":
                         cars.append(Car(position_x, position_y, 3))
-                    
-
+                
         #create instance
         pen = Pen()
         bones = Bones()
         logo = LogoBlindoff()
-        randomAgent = RandomAgent()
+        randomAgent = agents.RandomAgent()
         
         #set up level
         setup_maze(map_level)
@@ -605,15 +560,15 @@ def init_game(name_level, map_level):
             turtle.clearscreen()
             main.main()
             turtle.done()
+        
+        def hit_car():
+            for car in cars:
+                if player.is_collision(car):
+                    player_dead()
+                    return True
+            return False
 
-         
-
-        while True:
-            #randomAgent.make_action(player)
-            
-            timer = int(time.time()) - int(start)
-            show_score(timer, player.n_steps, player.hp)
-
+        def press_button():
             for i in range(len(buttons)):
                 c=0
                 button = buttons[i]
@@ -623,12 +578,8 @@ def init_game(name_level, map_level):
                     #print(c)
                     button.change_button()
                     doors[i].opens()
-            
-            for car in cars:
-                if player.is_collision(car):
-                    player_dead()
-                    break
-            
+        
+        def get_treasure():
             for treasure in treasures:
                 if player.is_collision(treasure):
                     player.hp += treasure.hp
@@ -636,6 +587,7 @@ def init_game(name_level, map_level):
                     treasure.destroy()
                     treasures.remove(treasure)
 
+        def hit_people():
             for person in persons:
                 if player.is_collision(person):
                     player.hp += person.hp
@@ -644,8 +596,25 @@ def init_game(name_level, map_level):
                     persons.remove(person)
                     if player.hp <= 0:
                         player_dead()
-                        break
-                    
+                        return True
+            return False
+
+        while True:
+            #randomAgent.make_action(player)
+            
+            timer = int(time.time()) - int(start)
+            show_score(timer, player.n_steps, player.hp)
+
+            press_button()
+            
+            if hit_car():
+                break
+            
+            get_treasure()
+
+            if hit_people():
+                break
+
             if player.is_collision(bones) and len(treasures) == 0:
                 player_win()
                 break
