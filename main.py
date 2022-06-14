@@ -4,77 +4,78 @@ import math
 import random
 import time
 import game_easy
+import numpy as np
 
 map_easy = [
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XP  XXXXXXXE         XXXXXX      XXXXXX",
-    "X  XXXXXXX  XXXXXX  XXXXXXX  XX  XXXXXX",
-    "X       XX  XXXXXX  XXXX     XX    XXXX",
+    "XP XXXXXXXXE         XXXXX       XXXXXX",
+    "X  XXXXXXX  XXXXXX  XXXXXX   XX  XXXXXX",
+    "X       XX  XXXXXX  XXXXXX   XX    XXXX",
     "X       XX  XXXXXX           XX    XXXX",
     "XXXXXX  XX  XXXXXX              XXXXXXX",
     "XXXXXX  XX  XXXXXXXXXXXXX     XXXXXXXXX",
-    "XXXXXX  XX    XXXXXXXXXXX        XXXXXX",
-    "XXXXXX        XXXXXXXXXXXXXXXX   XXXXXX",
+    "XXXXXX  XX  XXXXXXXXXXXXX        XXXXXX",
+    "XXXXXX  XX  XXXXXXXXXXXXXXXXXX   XXXXXX",
     "XXXXXX  XXXXXXXXXXXXXXXXXXXXXXX  XXXXXX",
     "X         XXXXXXXXXXXXXXXXXXXXX  XXXXXX",
     "XE               XXXXXXXXXXXXXX    XXXX",
-    "XXXXXXXXXXXX     XXXXX  XXXXXXXXX  XXXX",
-    "XXXXXXXXXXXXXXX  XXXXX  XXXXXXXXX  XXXX",
-    "XXX  XXXXXXXXXX         XXXXXXXXX    XX",
-    "XXX                     XXXXXXX    XXXX",
-    "XXX        TXXXXXXXXXXXXXXXXXXX  XXXXXX",
-    "XXXXXXXXXX  XXXXXXXXXXXXXXX      XXXXXX",
+    "XXXXXXXXXXXX     XXXXXXXXXXXXXXXX  XXXX",
+    "XXXXXXXXXXXXX    XXXXXXXXXXXXXXXX  XXXX",
+    "XXXXXXXXXXXXX         XXXXXXXXXXX    XX",
+    "XXX                  TXXXXXXXXX    XXXX",
+    "XXX                   XXXXXXXXX  XXXXXX",
+    "XXXXXXXXXX            XXXXX      XXXXXX",
     "XXXXXXXXXXE             XXXXX     XXXXX",
     "XXXXXXXXXX              XXXXXXXX  XXXXX",
-    "XXXXXXXXXXXXXXX     XXXXXXXXXXXX  XXXXX",
-    "XXXXXXXXXXXXXXX     X      XXXXX    XXX",
-    "XXXXXXXXXXXXXXXT       XX     XXXX  XXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXX  XXXX  XXX",
+    "XXXXXXXXXXXXXXX        XXXXXXXXX  XXXXX",
+    "XXXXXXXXXXXXXXX            XXXXX    XXX",
+    "XXXXXXXXXXXXXXXT              XXXX  XXX",
+    "XXXXXXXXXXXXXXXXXXXXXXXXXXXX        XXX",
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXX        HXX",
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 ]
 
 map_medium = [
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XP  XXXXXXXE         XXXXXXB     XXXXXX",
-    "X  XXXXXXX  XXXXXX  XXXXXXX  XX  XXXXXX",
-    "X      TXX  XXXXXX  XXXX     XX  XXXXXX",
-    "X E    XXX  XXB      EXX  XX XX  D  XXX",
-    "XXXXXX  XX  XXX              E  XXX  XX",
-    "XXXXXX  XX  XXXXXXXAXXXXX     XXXXX  TX",
-    "XXXXXX  XX    XXXXX XXXXX        XX  XX",
-    "XXXXXX        XXXXX XXXXXXXXXX   XXXXXX",
-    "XXXXXX  XXXXXXXXXXX        XXXX  XXXXXX",
-    "XXXXXX    XXXXXXXXXXXXXXX  XXXX  XXXXXX",
-    "XXXXXX           XXXXXXXX TXXXX    XXXX",
-    "XXXXXXXXXXXX     XXXXX TXXXXXXXXX  XXXX",
-    "XXXXXXXXXXXXXXX  XXXXX  XXXXXXXXX  XXXX",
-    "XXX TXXXXXXXXXX         XXXXXXXXX   TXX",
-    "XXXE                    XXXXXXX   EXXXX",
-    "XXX        TXXXXXXXXXXXXXXXXXXX  XXXXXX",
-    "XXXXXXXXXX  XXXXXXXXXXXXXXXB     XXXXXX",
-    "XXXXXXXXXXE             XXXXX     XXXXX",
-    "XXE  XXXXX             EXXXXXXXX  XXXXX",
-    "XX   XXXXXXXXXXXXX  XXXXXXXXXXXX EXXXXX",
-    "XX    XXXXXXXXXXXX  X      XXXXX  D XXX",
-    "XX     E   XXXXB       XX    BXXXXX XXX",
-    "XXXXT      D       TXXXXXXXX  XXXXX XXX",
-    "XXXXXXXXXXXXXXXX       TXXXX    ED  HXX",
+    "XP XXXXXXXXE     T  TXXXXX       XXXXXX",
+    "X  XXXXXXX                       XXXXXX",
+    "X      TXX                    TBTXXXXXX",
+    "X       XX            E          DT XXX",
+    "XXXXXX  XX    TBT               XX  XXX",
+    "XXXXXX  XX    XXXAX           XXXX    X",
+    "XXXXXX        XXXTX    XX        X    X",
+    "XXXXXX        XXXXX   XXXXXX     X    X",
+    "XXXXXX        XXXX   XXXXXXX    XX    X",
+    "XXXXXX             TXXXXXXXXX    X   XX",
+    "XXXXXX           T  XXXXXXXXXX       XX",
+    "XXXXXT           XXXXXXXXXXXXX      XXX",
+    "XXXXX            XXXXXXXXXXXXXX     XXX",
+    "XXX T            XXXXXXXXXXXXXX    TXXX",
+    "XXX              XXXXXXXXXXXXXXX   XXXX",
+    "XXX             XXXXXXXXXXXXXXX    XXXX",
+    "XXXXXXXX        XXXXXXXXXXX         XXX",
+    "XXXXXXXX  E             XXXXX       XXX",
+    "XX   XXX                XXXXXXXX    XXX",
+    "XX   XXX            XXXXXXXXXXXX    XXX",
+    "XX    XX                   XXXXX    XXX",
+    "XX     E                     BXXXX  XXX",
+    "XXXX   T           TXXXXXXXX  XXXX  XXX",
+    "XXXXXXXXXXXXXXXX       TXXXX     D  HXX",
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 ]
 
 map_hard = [
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XP     XT   X     X    XT       XT    X",
-    "X X XXE    EX XXX X XX         EX XXXXX",
-    "X X XXXXXXX X XXX X  X XXXXXXXX      EX",
-    "X XXX     X X   X XX X X        XXXXX X",
-    "X X   XXX X XXX X    X XXXXXXXX X     X",
-    "X X XXXXX X     XXXXXX  X       X XXXXX",
-    "X X XE TX XXXXXXX       X XXXXXXX X   X",
+    "XP     XT   X  T  X     T             X",
+    "X X XX      X  XX XT           E  XXXXX",
+    "X X XXXXXXX X  XX X  X XXXXXXXX T X  EX",
+    "X XXX     X X T X X  X X  X      XX   X",
+    "X X   XXX X XXX X  T X XX X     X     X",
+    "X X XXXXX X    TXXXXXX  X X     X XXXXX",
+    "X X XE TX XXXXXXX       X X     X X   X",
     "X X X X X       X XXX XXX       X X X X",
-    "X X X X XXXXXXX X XXX XXXXXXXXX X X X X",
-    "X X X X XXXXXXX X XXX XXXXXXXXX X X X X",
+    "X X X X XXXXXXX X XXX XXXXXX    X X X X",
+    "X X X X XXXXXXX X XXX XXXXXX  T X X X X",
     "ZZZZZZZZZZZZZZZZSZZZZZZZZZZZZZZZZZZZZZZ", #passadeira
     "KKKKKKKKKKKKKKKKKYYYKKKKKKKKKKKKKKKKKKKC", 
     "RRRRRRRRRRRRRRRRRYYYRRRRRRRRRRRRRRRRRRRV",
@@ -83,14 +84,26 @@ map_hard = [
     "RRRRRRRRRRRRRRRRRYYYRRRRRRRRRRRRRRRRRRRG",
     "RRRRRRRRRRRRRRRRRYYYRRRRRRRRRRRRRRRRRRRO",
     "ZZZZZZZZZZZZZZZZZZZZSZZZZZZZZZZZZZZZZZZ", #passadeira
-    "X XXXTXXX XXXX XXXXXXXXXXX  TXXXX X X X",
+    "X XXXXXXX XXXX XXXXXXXXXXXXXXXXXXTX X X",
     "X XXXXXXX XXXX XXXXXXXXXXXXXXX    X X X",
-    "X XXXXXXX XXXX XXXXXXX       X XXXX X X",
+    "X XXXXXXX XXXX XXXXXXX       XTXXXX X X",
     "X X     X XXXX XXXXXXX X X X X        X",
     "X X XXX X XT   XXXXXXX X T X XXXXXXXX X",
     "X   XXX   XXXX        EXXXXX         HX",
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 ]
+
+def run_game(lvl,map, n_episodes):
+    results = np.zeros(n_episodes)
+
+    for episode in range(n_episodes):
+        turtle.clearscreen()
+        time.sleep(0.5)
+        r = game_easy.init_game(lvl, map)
+        results[episode] = r #steps?
+    print("results:--------------------------")
+    print(results)
+    return results
 
 
 def main():
@@ -121,17 +134,13 @@ def main():
 
         def play_game(self, x, y):
             if self.level == "easy.gif":
-                turtle.clearscreen()
-                game_easy.init_game("easy", map_easy)
+                run_game("easy", map_easy, 3)
             elif self.level == "medium.gif":
-                turtle.clearscreen()
-                game_easy.init_game("medium", map_medium)
+                run_game("medium", map_medium, 3)
             elif self.level == "hard.gif":
-                turtle.clearscreen()
-                game_easy.init_game("hard", map_hard)
+                run_game("hard", map_hard, 3)
             else: #exit
                 turtle.bye()
-
 
     # add level
     level_easy = Level(easy, 20)
@@ -145,7 +154,7 @@ def main():
     screen.tracer(0)
 
     #screen.listen()
-    time.sleep(3)
+    time.sleep(2)
 
 
 main()

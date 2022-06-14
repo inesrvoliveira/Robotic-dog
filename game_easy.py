@@ -5,14 +5,20 @@ import random
 import main
 import time
 import agents
+import copy
+import numpy as np
+
+screen = turtle.Screen()
+
+def init_screen():
+    screen.bgcolor("black")
+    screen.title("Blindoff")
+    screen.setup(1000, 750)
+    screen.tracer(0)
 
 def init_game(name_level, map_level):
     #try:
-        screen = turtle.Screen()
-        screen.bgcolor("black")
-        screen.title("Blindoff")
-        screen.setup(1000, 750)
-        screen.tracer(0)
+        init_screen()
 
         #register shape
         wall_easy = "grass1.gif"
@@ -153,7 +159,7 @@ def init_game(name_level, map_level):
                 self.speed(0)
                 self.hp = 500
                 self.n_steps = 0
-                show_score(timer, self.n_steps, self.hp)
+                #show_score(timer, self.n_steps, self.hp)
 
             def up(self):
                 self.shape(top)
@@ -161,7 +167,7 @@ def init_game(name_level, map_level):
                 move_to_y = self.ycor() + 24
                 can_move(move_to_x, move_to_y, self, False)
                 self.n_steps += 1
-                show_score(timer, self.n_steps, self.hp)
+                #show_score(timer, self.n_steps, self.hp)
 
             def down(self):
                 self.shape(bottom)
@@ -169,7 +175,7 @@ def init_game(name_level, map_level):
                 move_to_y = self.ycor() - 24
                 can_move(move_to_x, move_to_y, self, False)
                 self.n_steps += 1
-                show_score(timer, self.n_steps, self.hp)
+                #show_score(timer, self.n_steps, self.hp)
                 
             def left(self):
                 self.shape(left)
@@ -177,7 +183,7 @@ def init_game(name_level, map_level):
                 move_to_y = self.ycor()
                 can_move(move_to_x, move_to_y, self, False)
                 self.n_steps += 1
-                show_score(timer, self.n_steps, self.hp)
+                #show_score(timer, self.n_steps, self.hp)
                 
             def right(self):
                 self.shape(right)
@@ -185,7 +191,7 @@ def init_game(name_level, map_level):
                 move_to_y = self.ycor()
                 can_move(move_to_x, move_to_y, self, False)
                 self.n_steps += 1
-                show_score(timer, self.n_steps, self.hp)
+                #show_score(timer, self.n_steps, self.hp)
 
             def is_collision(self, other):
                 a = self.xcor() - other.xcor()
@@ -507,7 +513,12 @@ def init_game(name_level, map_level):
         pen = Pen()
         bones = Bones()
         logo = LogoBlindoff()
+        
+        #Agents
         randomAgent = agents.RandomAgent()
+        greedyAgent = agents.GreedyAgent()
+
+        agent = greedyAgent
         
         #set up level
         setup_maze(map_level)
@@ -517,11 +528,11 @@ def init_game(name_level, map_level):
         setup_player_and_persons_and_cars(map_level)
 
         #keyboard bindding
-        turtle.listen()
-        turtle.onkey(player.up, "Up")
-        turtle.onkey(player.down, "Down")
-        turtle.onkey(player.right, "Right")
-        turtle.onkey(player.left, "Left")
+        #turtle.listen()
+        #turtle.onkey(player.up, "Up")
+        #turtle.onkey(player.down, "Down")
+        #turtle.onkey(player.right, "Right")
+        #turtle.onkey(player.left, "Left")
 
         #run person
         for person in persons:
@@ -564,7 +575,7 @@ def init_game(name_level, map_level):
         def hit_car():
             for car in cars:
                 if player.is_collision(car):
-                    player_dead()
+                    #player_dead()
                     return True
             return False
 
@@ -582,44 +593,86 @@ def init_game(name_level, map_level):
         def get_treasure():
             for treasure in treasures:
                 if player.is_collision(treasure):
-                    player.hp += treasure.hp
-                    show_score(timer, player.n_steps, player.hp)
+                    player.hp += 300
+                    #show_score(timer, player.n_steps, player.hp)
                     treasure.destroy()
                     treasures.remove(treasure)
+                    return treasure.hp
+            return 0
 
         def hit_people():
             for person in persons:
                 if player.is_collision(person):
-                    player.hp += person.hp
-                    show_score(timer, player.n_steps ,player.hp)
+                    player.hp -= 400
+                    #show_score(timer, player.n_steps ,player.hp)
                     person.destroy()
                     persons.remove(person)
                     if player.hp <= 0:
-                        player_dead()
+                        #player_dead()
                         return True
             return False
 
-        while True:
-            #randomAgent.make_action(player)
-            
+        def make_action(action):
+                if(action == 0):
+                    player.down()
+                if(action == 1):
+                    player.left()
+                if(action == 2):
+                    player.up()
+                if(action == 3):
+                    player.right()
+                if(action == 4):
+                    pass
+        
+        def treasures_to_positions():
+            pos_treasure = []
+            for treasure in treasures:
+                pos_treasure.append([treasure.xcor(),treasure.ycor()])
+            if(map_level == "medium"):
+                for button_pos in buttons_pos:
+                    pos_treasure.append(button_pos)
+            return pos_treasure
+
+        def step(action):
+            next_obs = []
+            terminal = False
+            reward = 0
+
+            make_action(action)
             timer = int(time.time()) - int(start)
             show_score(timer, player.n_steps, player.hp)
 
             press_button()
             
             if hit_car():
-                break
+                terminal = True
             
-            get_treasure()
+            reward = get_treasure()
 
             if hit_people():
-                break
+                terminal = True
 
             if player.is_collision(bones) and len(treasures) == 0:
-                player_win()
-                break
-            
+                #player_win()
+                terminal = True
+
+            next_obs = treasures_to_positions()
+
+            if next_obs == [] and player.xcor() != bones.xcor() and player.ycor() != bones.ycor():
+                next_obs.append([bones.xcor(),bones.ycor()])
+
+            return next_obs,reward,terminal   
+        
+        terminal = False
+        observation = treasures_to_positions()
+        while not terminal:
+            agent.see(observation)
+            action = agent.action(player.xcor(),player.ycor(),walls)
+            next_obs, reward, terminal = step(action)
+            observation = next_obs
             screen.update()
+
+        return player.n_steps
     #except:
         #to avoid the erro from trying to update a screen that has already been destroyed
         #print("The screen is dead.")
