@@ -450,7 +450,7 @@ def init_game(name_level, map_level):
             def destroy(self):
                 self.goto(2000, 2000)
                 self.hideturtle()
-
+    
         #setup level
         def setup_maze(level):
             for y in range(len(level)):
@@ -485,7 +485,8 @@ def init_game(name_level, map_level):
                     elif character == "Y":
                         crossroads.append(CrossRoad(position_x, position_y))
                     elif character == "S":
-                        semaphores.append(Semaphore(position_x, position_y))
+                        semaphores.append(Semaphore(position_x, position_y))                
+            
         
         def setup_player_and_persons_and_cars(level):
             for y in range(len(level)):
@@ -517,8 +518,9 @@ def init_game(name_level, map_level):
         #Agents
         randomAgent = agents.RandomAgent()
         greedyAgent = agents.GreedyAgent()
+        qLearningAgent = agents.QLearningAgent()
 
-        agent = greedyAgent
+        agent = qLearningAgent
         
         #set up level
         setup_maze(map_level)
@@ -665,10 +667,20 @@ def init_game(name_level, map_level):
         
         terminal = False
         observation = treasures_to_positions()
+        if (agent.name == "Q-Learning"):
+                if(agent._exploration_rate <= 0.01):
+                    agent.eval()
+                    agent._exploration_rate = 0.01
+                else:
+                    agent.train()
+                    agent._exploration_rate = agent._exploration_rate - 0.10
+        
         while not terminal:
             agent.see(observation)
             action = agent.action(player.xcor(),player.ycor(),walls)
             next_obs, reward, terminal = step(action)
+            if agent.train():
+                agent.next(observation, action, next_obs, reward, terminal)               
             observation = next_obs
             screen.update()
 

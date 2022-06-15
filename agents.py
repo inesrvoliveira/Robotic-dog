@@ -6,6 +6,7 @@ import time
 from aasma import Agent
 import numpy as np
 from scipy.spatial.distance import cityblock
+from collections import defaultdict
 
 N_ACTIONS = 5
 
@@ -162,3 +163,46 @@ class GreedyAgent(Agent):
             return DOWN
         else:
             return STAY
+
+class QLearningAgent(Agent):
+
+    def __init__(self, learning_rate = 0.3, discount_factor = 0.99, exploration_rate = 1, initial_q_values = 0):
+        self._Q = defaultdict(lambda: np.ones(N_ACTIONS) * initial_q_values)
+        self._learning_rate = learning_rate
+        self._discount_factor = discount_factor
+        self._exploration_rate = exploration_rate
+        self.n_actions = N_ACTIONS
+        super(QLearningAgent, self).__init__("Q-Learning")
+    
+    def action(self, x, y, walls_pos, exploration = True) -> int:
+
+        agent_position = [x, y]
+        position = tuple(agent_position)
+        #Access Q-Values for current observation
+        q_values = self._Q[position]
+
+        if not self.training or (self.training and np.random.uniform(0, 1) > self._exploration_rate):
+            # Exploit
+            actions = np.argwhere(q_values == np.max(q_values)).reshape(-1)
+            # print("checke walls:-------------------------------")
+            #actions = self.theres_wall(actions, agent_position, walls_pos)
+        else:
+            # Explore
+            actions = range(self.n_actions)
+            # print("checke walls:-------------------------------")
+            #actions = self.theres_wall(actions, agent_position, walls_pos)
+
+        return np.random.choice(actions)
+
+    def next(self, observation, action, next_observation, reward, terminal):
+
+        x, a, r, y = tuple(observation), action, reward, tuple(next_observation)
+        alpha, gamma = self._learning_rate, self._discount_factor
+
+        Q_xa = self._Q[x][a]
+        Q_y = self._Q[y]
+
+        max_Q_ya = max(Q_y)
+
+        # Update rule for Q-Learning
+        self._Q[x][a] = Q_xa + alpha * (r + gamma * max_Q_ya - Q_xa)

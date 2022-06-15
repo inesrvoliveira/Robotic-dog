@@ -3,35 +3,37 @@ import turtle
 import math
 import random
 import time
+from aasma import agent
 import game_easy
 import numpy as np
+from agents import RandomAgent, GreedyAgent, QLearningAgent
 
 map_easy = [
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XP XXXXXXXXE         XXXXX       XXXXXX",
-    "X  XXXXXXX  XXXXXX  XXXXXX   XX  XXXXXX",
-    "X       XX  XXXXXX  XXXXXX   XX    XXXX",
-    "X       XX  XXXXXX           XX    XXXX",
-    "XXXXXX  XX  XXXXXX              XXXXXXX",
-    "XXXXXX  XX  XXXXXXXXXXXXX     XXXXXXXXX",
-    "XXXXXX  XX  XXXXXXXXXXXXX        XXXXXX",
-    "XXXXXX  XX  XXXXXXXXXXXXXXXXXX   XXXXXX",
-    "XXXXXX  XXXXXXXXXXXXXXXXXXXXXXX  XXXXXX",
-    "X         XXXXXXXXXXXXXXXXXXXXX  XXXXXX",
-    "XE               XXXXXXXXXXXXXX    XXXX",
-    "XXXXXXXXXXXX     XXXXXXXXXXXXXXXX  XXXX",
-    "XXXXXXXXXXXXX    XXXXXXXXXXXXXXXX  XXXX",
-    "XXXXXXXXXXXXX         XXXXXXXXXXX    XX",
-    "XXX                  TXXXXXXXXX    XXXX",
-    "XXX                   XXXXXXXXX  XXXXXX",
-    "XXXXXXXXXX            XXXXX      XXXXXX",
-    "XXXXXXXXXXE             XXXXX     XXXXX",
-    "XXXXXXXXXX              XXXXXXXX  XXXXX",
-    "XXXXXXXXXXXXXXX        XXXXXXXXX  XXXXX",
-    "XXXXXXXXXXXXXXX            XXXXX    XXX",
-    "XXXXXXXXXXXXXXXT              XXXX  XXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXX        XXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXX        HXX",
+    "XXXXXXXXXXXE         XXXXX       XXXXXX",
+    "XXXXXXXXXX  XXXXXX  XXXXXX   XX  XXXXXX",
+    "XXXXXXXXXX  XXXXXX  XXXXXX   XX    XXXX",
+    "XXXXXXXXXX  XXXXXX           XX    XXXX",
+    "XXXXXXPXXX  XXXXXX              XXXXXXX",
+    "XXXXXX XXX  XXXXXXXXXXXXX     XXXXXXXXX",
+    "XXXXXX XXX  XXXXXXXXXXXXX        XXXXXX",
+    "XXXXXX XXX  XXXXXXXXXXXXXXXXXX   XXXXXX",
+    "XXXXXX XXXXXXXXXXXXXXXXXXXXXXXX  XXXXXX",
+    "XXXXXX XXXXXXXXXXXXXXXXXXXXXXXX  XXXXXX",
+    "XXXXXX          XXXXXXXXXXXXXXX    XXXX",
+    "XXXXXXXXXXXX    XXXXXXXXXXXXXXXXX  XXXX",
+    "XXXXXXXXXXXXX   XXXXXXXXXXXXXXXXX  XXXX",
+    "XXXXXXXXXXXXX   XXXXXXXXXXXXXXXXX    XX",
+    "XXXXXXXXXXXXX   TXXXXXXXXXXXXXX    XXXX",
+    "XXXXXXXXXXXXX    XXXXXXXXXXXXXX  XXXXXX",
+    "XXXXXXXXXXXXX    XXXXXXXXXX      XXXXXX",
+    "XXXXXXXXXXXXXE   XXXXXXXXXXXX     XXXXX",
+    "XXXXXXXXXXXXX    XXXXXXXXXXXXXXX  XXXXX",
+    "XXXXXXXXXXXXXXX   XXXXXXXXXXXXXX  XXXXX",
+    "XXXXXXXXXXXXXXX      XXXXXXXXXXXXXXXXXX",
+    "XXXXXXXXXXXXXXXH     XXXXXXXXXXXXXXXXXX",
+    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 ]
 
@@ -93,7 +95,7 @@ map_hard = [
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 ]
 
-def run_game(lvl,map, n_episodes):
+def run_game(lvl, map, n_episodes):
     results = np.zeros(n_episodes)
 
     for episode in range(n_episodes):
@@ -118,6 +120,13 @@ def main():
     screen.addshape(medium)
     screen.addshape(hard)
     screen.addshape(exit)
+
+    # 2 - Setup agents
+    agents = [
+        QLearningAgent(),     
+        RandomAgent(),
+        GreedyAgent()
+    ]
 
     # create level
     class Level(turtle.Turtle):
