@@ -17,7 +17,7 @@ class RandomAgent(Agent):
         super(RandomAgent, self).__init__("Random Agent")
         self.n_actions = N_ACTIONS
 
-    def action(self) -> int:
+    def action(self, x, y, walls_pos) -> int:
         return np.random.randint(self.n_actions)
 
     def next(self, observation, action, next_observation, reward, terminal, info):

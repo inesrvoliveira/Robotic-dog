@@ -16,7 +16,7 @@ def init_screen():
     screen.setup(1000, 750)
     screen.tracer(0)
 
-def init_game(name_level, map_level):
+def init_game(name_level, map_level, n_episode):
     #try:
         init_screen()
 
@@ -91,9 +91,9 @@ def init_game(name_level, map_level):
             turtle.clear()
             turtle.color('white')
             turtle.penup()
-            turtle.goto(160, 305)
+            turtle.goto(100, 305)
             style = ('Courier', 20, 'bold')
-            turtle.write("Time: {0}    Steps: {1}    Score: {2}".format(timer, n_steps, hp), font=style, align='center')
+            turtle.write("Ep: {0}   Time: {1}    Steps: {2}    Score: {3}".format(n_episode,timer, n_steps, hp), font=style, align='center')
             turtle.hideturtle()
        
         
@@ -599,8 +599,8 @@ def init_game(name_level, map_level):
                     #show_score(timer, player.n_steps, player.hp)
                     treasure.destroy()
                     treasures.remove(treasure)
-                    return treasure.hp
-            return 0
+                    return True
+            return False
 
         def hit_people():
             for person in persons:
@@ -611,8 +611,10 @@ def init_game(name_level, map_level):
                     persons.remove(person)
                     if player.hp <= 0:
                         #player_dead()
-                        return True
-            return False
+                        return 0
+                    else:
+                        return 1
+            return 2
 
         def make_action(action):
                 if(action == 0):
@@ -644,18 +646,25 @@ def init_game(name_level, map_level):
             timer = int(time.time()) - int(start)
             show_score(timer, player.n_steps, player.hp)
 
-            press_button()
+            if press_button():
+                reward = 1
             
             if hit_car():
+                reward = -1
                 terminal = True
             
-            reward = get_treasure()
+            if get_treasure():
+                reward = 1
 
-            if hit_people():
+            if hit_people() == 0:
+                reward = -1
                 terminal = True
+            elif hit_people() == 1:
+                reward = -1
 
             if player.is_collision(bones) and len(treasures) == 0:
                 #player_win()
+                reward = 2
                 terminal = True
 
             next_obs = treasures_to_positions()
@@ -673,7 +682,7 @@ def init_game(name_level, map_level):
                     agent._exploration_rate = 0.01
                 else:
                     agent.train()
-                    agent._exploration_rate = agent._exploration_rate - 0.10
+                    agent._exploration_rate = agent._exploration_rate - 0.30
         
         while not terminal:
             agent.see(observation)
