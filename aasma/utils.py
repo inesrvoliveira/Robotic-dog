@@ -114,7 +114,7 @@ def plot_confidence_bar(names, means, std_devs, N, title, x_label, y_label, conf
     plt.close()
 
 
-def compare_results(results, confidence=0.95, title="Agents Comparison", metric="Steps Per Episode", colors=None):
+def compare_results(results, parameter, confidence=0.95, title="Agents Comparison", colors=None,):
 
     """Displays a bar plot comparing the performance of different agents/teams.
 
@@ -133,6 +133,12 @@ def compare_results(results, confidence=0.95, title="Agents Comparison", metric=
         A sequence of colors (one for each agent/team)
 
     """
+    if parameter == 0:
+        metric = "Steps Per Episode"
+    elif parameter == 1:
+        metric = "Time Per Episode"
+    elif parameter == 2:
+        metric = "Score Per Episode"
 
     names = list(results.keys())
     means = [result.mean() for result in results.values()]
@@ -163,9 +169,15 @@ def plot_confidence_errors(x, y, yerr, title, xlabel, ylabel, color, show):
         plt.show()
     plt.close()
 
-def compare_results_learning(results, confidence=0.95, title="Agents Comparison", metric="Steps Per Episode", colors=None):
+def compare_results_learning(results, parameter, confidence=0.95, title="Agents Comparison", colors=None):
 
     x = None
+    if parameter == 0:
+        metric = "Steps Per Episode"
+    elif parameter == 1:
+        metric = "Time Per Episode"
+    elif parameter == 2:
+        metric = "Score Per Episode"
 
     for agent, agent_results in results.items():
 

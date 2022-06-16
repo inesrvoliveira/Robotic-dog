@@ -95,25 +95,34 @@ map_hard = [
 
 def run_loop_single(lvl, map, agent, n_evaluations, n_episodes):
     
-    results = np.zeros((n_evaluations, n_episodes))
+    results_steps = np.zeros((n_evaluations, n_episodes))
+    results_time = np.zeros((n_evaluations, n_episodes))
+    results_score = np.zeros((n_evaluations, n_episodes))
 
     for evaluation in range(n_evaluations):
-        result = run_game(lvl, map, agent, n_episodes)
-        results[evaluation] = result
-    return results,result
+        result_steps, result_time, result_score = run_game(lvl, map, agent, n_episodes)
+        results_steps[evaluation] = result_steps
+        results_time[evaluation] = result_time
+        results_score[evaluation] = result_score
+    return results_steps, result_steps, results_time, result_time, results_score, result_score
 
 
 def run_game(lvl, map, agent, n_episodes):
-    results = np.zeros(n_episodes)
 
+    results_steps = np.zeros(n_episodes)
+    results_time = np.zeros(n_episodes)
+    results_score = np.zeros(n_episodes)
+    
     for episode in range(n_episodes):
         turtle.clearscreen()
         time.sleep(0.5)
-        r = game_easy.init_game(lvl, map, agent, episode)
-        results[episode] = r #steps?
+        results_steps[episode], results_time[episode], results_score[episode] = game_easy.init_game(lvl, map, agent, episode)
+                
     print("results:--------------------------")
-    print(results)
-    return results
+    print(results_steps)
+    print(results_time)
+    print(results_score)
+    return results_steps,results_time, results_score
 
 
 def main():
@@ -150,30 +159,60 @@ def main():
             self.onclick(self.play_game)
 
         def play_game(self, x, y):
-            results = {}
-            results1 = {}
+            results_steps_episode = {}
+            results_steps_evaluation = {}
+            results_time_episode = {}
+            results_time_evaluation = {}
+            results_score_episode = {}
+            results_score_evaluation = {}
             for agent in agents:
                 if self.level == "easy.gif":
                     #result = run_game("easy", map_easy, agent, 3)
-                    result, result1 = run_loop_single("easy", map_easy, agent, 10, 10)
-                    results[agent.name] = result
-                    results1[agent.name] = result1
+                    results_steps, result_steps, results_time, result_time, results_score, result_score = run_loop_single("easy", map_easy, agent, 10, 10)
+                    results_steps_evaluation[agent.name] = results_steps
+                    results_steps_episode[agent.name] = result_steps
+                    results_time_evaluation[agent.name] = results_time
+                    results_time_episode[agent.name] = result_time
+                    results_score_evaluation[agent.name] = results_score
+                    results_score_episode[agent.name] = result_score
                 elif self.level == "medium.gif":
                     #result = run_game("medium", map_medium, agent, 3)
-                    result, result1 = run_loop_single("medium", map_medium, agent, 10, 10)
-                    results[agent.name] = result
-                    results1[agent.name] = result1
+                    results_steps, result_steps, results_time, result_time, results_score, result_score = run_loop_single("medium", map_medium, agent, 10, 10)
+                    results_steps_evaluation[agent.name] = results_steps
+                    results_steps_episode[agent.name] = result_steps
+                    results_time_evaluation[agent.name] = results_time
+                    results_time_episode[agent.name] = result_time
+                    results_score_evaluation[agent.name] = results_score
+                    results_score_episode[agent.name] = result_score
                 elif self.level == "hard.gif":
                     #result = run_game("hard", map_hard, agent, 3)
-                    result, result1 = run_loop_single("hard", map_hard, agent, 10, 10)
-                    results[agent.name] = result
-                    results1[agent.name] = result1
+                    results_steps, result_steps, results_time, result_time, results_score, result_score = run_loop_single("hard", map_hard, agent, 10, 10)
+                    results_steps_evaluation[agent.name] = results_steps
+                    results_steps_episode[agent.name] = result_steps
+                    results_time_evaluation[agent.name] = results_time
+                    results_time_episode[agent.name] = result_time
+                    results_score_evaluation[agent.name] = results_score
+                    results_score_episode[agent.name] = result_score
                 else: #exit
                     turtle.bye()
+
             # Compare results
-            print(results)
-            compare_results(results1, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
-            compare_results_learning(results, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
+            parameter = 0 # 0 - steps, 1 - time, 2 - score
+
+            # steps
+            parameter = 0
+            compare_results(results_steps_episode, parameter, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
+            compare_results_learning(results_steps_evaluation, parameter, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
+
+            # time
+            parameter = 1
+            compare_results(results_time_episode, parameter, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
+            compare_results_learning(results_time_evaluation, parameter, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
+
+            # score
+            parameter = 2
+            compare_results(results_score_episode, parameter, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
+            compare_results_learning(results_score_evaluation, parameter, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
 
 
     # add level

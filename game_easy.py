@@ -166,6 +166,7 @@ def init_game(name_level, map_level, agent, n_episode):
                 self.speed(0)
                 self.hp = 500
                 self.n_steps = 0
+                self.time = 0
                 #show_score(timer, self.n_steps, self.hp)
 
             def up(self):
@@ -700,6 +701,7 @@ def init_game(name_level, map_level, agent, n_episode):
             make_action(action)
             timer = int(time.time()) - int(start)
             show_score(timer, player.n_steps, player.hp)
+            player.time = timer
 
             if press_button():
                 reward = 1
@@ -754,7 +756,7 @@ def init_game(name_level, map_level, agent, n_episode):
             observation = next_obs
             screen.update()
 
-        return player.n_steps
+        return player.n_steps, player.time, player.hp
     #except:
         #to avoid the erro from trying to update a screen that has already been destroyed
         #print("The screen is dead.")
