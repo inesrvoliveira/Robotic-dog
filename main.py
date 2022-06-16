@@ -100,7 +100,7 @@ def run_loop_single(lvl, map, agent, n_evaluations, n_episodes):
     for evaluation in range(n_evaluations):
         result = run_game(lvl, map, agent, n_episodes)
         results[evaluation] = result
-    return results
+    return results,result
 
 
 def run_game(lvl, map, agent, n_episodes):
@@ -151,24 +151,28 @@ def main():
 
         def play_game(self, x, y):
             results = {}
+            results1 = {}
             for agent in agents:
                 if self.level == "easy.gif":
                     #result = run_game("easy", map_easy, agent, 3)
-                    result = run_loop_single("easy", map_easy, agent, 3, 7)
+                    result, result1 = run_loop_single("easy", map_easy, agent, 10, 10)
                     results[agent.name] = result
+                    results1[agent.name] = result1
                 elif self.level == "medium.gif":
                     #result = run_game("medium", map_medium, agent, 3)
-                    result = run_loop_single("medium", map_medium, agent, 2, 1)
+                    result, result1 = run_loop_single("medium", map_medium, agent, 10, 10)
                     results[agent.name] = result
+                    results1[agent.name] = result1
                 elif self.level == "hard.gif":
                     #result = run_game("hard", map_hard, agent, 3)
-                    result = run_loop_single("hard", map_hard, agent, 2, 1)
+                    result, result1 = run_loop_single("hard", map_hard, agent, 10, 10)
                     results[agent.name] = result
+                    results1[agent.name] = result1
                 else: #exit
                     turtle.bye()
             # Compare results
             print(results)
-            #compare_results(results, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
+            compare_results(results1, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
             compare_results_learning(results, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
 
 
