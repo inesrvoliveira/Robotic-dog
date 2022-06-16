@@ -17,7 +17,7 @@ class RandomAgent(Agent):
         super(RandomAgent, self).__init__("Random Agent")
         self.n_actions = N_ACTIONS
 
-    def action(self, x, y, walls_pos, roads_pos, people_pos) -> int:
+    def action(self, x, y, walls_pos, roads_pos, people_pos,sides_pos, crossroads_pos, sem) -> int:
         return np.random.randint(self.n_actions)
 
     def next(self, observation, action, next_observation, reward, terminal, info):
@@ -35,6 +35,22 @@ class GreedyAgent(Agent):
         super(GreedyAgent, self).__init__(f"Greedy Agent")
         self.n_actions = N_ACTIONS
     
+    def can_cross(self, d, sides_pos, crossroads_pos,sem, agent_position):
+        #------ is he crossing already------------
+        if(agent_position in crossroads_pos):
+            #print("he is CROSSING!!!!!!!!!!!!!!!!")
+            if d == RIGHT:
+                return DOWN
+            if d == LEFT:
+                return UP
+            else:
+                return d
+        #------ does he want to cross ------------
+        if(tuple(agent_position) in sides_pos and sem == 0):
+            #print("he wants CROSSING!!!!!!!!!!!!!!!!")
+            return STAY
+        return d
+
     def find_way(self,can_move,  seq):
         aux = 0
         while True:
@@ -50,8 +66,6 @@ class GreedyAgent(Agent):
         
         surroundings = [d_down,d_left,d_up,d_right]
         can_move = []
-        print("PEOPLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
-        print(people_pos)
         for i in range(len(surroundings)):
             if(surroundings[i] in walls_pos or surroundings[i] in roads_pos or surroundings[i] in people_pos):
                 can_move.append(False)
@@ -61,14 +75,14 @@ class GreedyAgent(Agent):
         can_move.append(True)
 
         if(can_move[d]):
-            print("devolvi aqui!!!!!!!!!!")
-            print(can_move)
+            #print("devolvi aqui!!!!!!!!!!")
+            #print(can_move)
             return d
         else:
             #choose the preference way if there's a wall
             if(d == DOWN):
-                print("devolvi aqui2222222222!!!!!!!!!!")
-                print(can_move)
+                #print("devolvi aqui2222222222!!!!!!!!!!")
+                #print(can_move)
                 #if(can_move[RIGHT]): return RIGHT
                 #if(can_move[LEFT]): return LEFT
                 #if(can_move[UP]): return UP
@@ -93,29 +107,31 @@ class GreedyAgent(Agent):
                 return self.find_way(can_move, [RIGHT, DOWN, LEFT, STAY])
 
 
-    def action(self,x,y, walls_pos, roads_pos, people_pos) -> int:
+    def action(self,x,y, walls_pos, roads_pos, people_pos, sides_pos, crossroads_pos, sem) -> int:
         treasure_positions = self.observation
-        print("treasure positions:-------------------------------")
-        print(treasure_positions)
+        #print("treasure positions:-------------------------------")
+        #print(treasure_positions)
 
         agent_position = [x,y]
-        print("agent:-------------------------------")
-        print(agent_position)
+        #print("agent:-------------------------------")
+        #print(agent_position)
 
         closest_treasure = self.closest_treasure(agent_position, treasure_positions)
-        print("closest_treasure:-------------------------------")
-        print(closest_treasure)
+        #print("closest_treasure:-------------------------------")
+        #print(closest_treasure)
 
         treasure_found = closest_treasure is not None
 
         if treasure_found:
-            print("direction_to_go:-------------------------------")
-            print(self.direction_to_go(agent_position, closest_treasure))
+            #print("direction_to_go:-------------------------------")
+            #print(self.direction_to_go(agent_position, closest_treasure))
             d = self.direction_to_go(agent_position, closest_treasure)
-            print("checke walls:-------------------------------")
+            #print("checke walls:-------------------------------")
             d = self.theres_wall_road(d, agent_position, walls_pos,roads_pos,people_pos)
 
-            print(d)
+            d = self.can_cross(d, sides_pos, crossroads_pos, sem, agent_position)
+
+            #print(d)
             return d
         else:
             return random.randrange(N_ACTIONS)
@@ -187,7 +203,7 @@ class QLearningAgent(Agent):
         self.n_actions = N_ACTIONS
         super(QLearningAgent, self).__init__("Q-Learning")
     
-    def action(self, x, y, walls_pos, roads_pos, people_pos, exploration = True) -> int:
+    def action(self, x, y, walls_pos, roads_pos, people_pos,sides_pos, crossroads_pos, sem, exploration = True) -> int:
 
         agent_position = [x, y]
         position = tuple(agent_position)

@@ -78,7 +78,7 @@ map_hard = [
     "         XXXXXXXXUUUU    XXXX          ",
     "         XXXXXXXXUUXXXXXXXXXX          ",
     "         XXXXXXXXUUXXXXXXXXXX          ",
-    "         XXXXXXSXZZXXXXXXXXXX         ", #passadeira
+    "         XXXXXXSXZZXXXXXXXXXX          ", #passadeira
     "         KKKKKKKKYYKKKKKKKKKKC         ", 
     "         RRRRRRRRYYRRRRRRRRRRV         ",
     "         RRRRRRRRYYRRRRRRRRRRC         ",
