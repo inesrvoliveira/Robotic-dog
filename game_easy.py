@@ -126,11 +126,17 @@ def init_game(name_level, map_level, agent, n_episode):
                 self.penup()
                 self.speed(0)
 
+        def is_road(move_to_x, move_to_y):
+            for i in range(len(roads)):
+                if((move_to_x,move_to_y) == (roads[i].xcor(),roads[i].ycor())):
+                    return True
+            return False
+
         def is_edge_space(move_to_x, move_to_y):
-            return (move_to_x, move_to_y) == (-480,24) or (move_to_x, move_to_y) == (-480,-144) or (move_to_x, move_to_y) == (480,-144) or (move_to_x, move_to_y) == (480,24)
+            return (move_to_x, move_to_y) == (- 264,24) or (move_to_x, move_to_y) == (- 264,-144) or (move_to_x, move_to_y) == ( 264,-144) or (move_to_x, move_to_y) == ( 264,24)
 
         def can_move(move_to_x, move_to_y, player, isPerson):
-            if (move_to_x, move_to_y) not in walls and (move_to_x, move_to_y) not in doors_pos and not is_edge_space(move_to_x, move_to_y) :
+            if (move_to_x, move_to_y) not in walls and (move_to_x, move_to_y) not in doors_pos and not is_edge_space(move_to_x, move_to_y) and not is_road(move_to_x, move_to_y) :
                 if isPerson:
                     if (move_to_x, move_to_y) not in side_pos:
                         player.goto(move_to_x, move_to_y)
@@ -324,18 +330,18 @@ def init_game(name_level, map_level, agent, n_episode):
                     self.direction = "right"
             
             def move_cars(self):
-                if ((self.xcor(),self.ycor()) == (-480,0)):
-                    self.goto(480, 0)
-                if ((self.xcor(),self.ycor()) == (-480,-24)):
-                    self.goto(480, -24)
-                if ((self.xcor(),self.ycor()) == (-480,-48)):
-                    self.goto(480, -48)
-                if ((self.xcor(),self.ycor()) == (480,-72)):
-                    self.goto(-480, -72)
-                if ((self.xcor(),self.ycor()) == (480,-96)):
-                    self.goto(-480, -96)
-                if ((self.xcor(),self.ycor()) == (480,-120)):
-                    self.goto(-480, -120)
+                if ((self.xcor(),self.ycor()) == (-264,0)):
+                    self.goto( 264, 0)
+                if ((self.xcor(),self.ycor()) == (-264,-24)):
+                    self.goto( 264, -24)
+                if ((self.xcor(),self.ycor()) == (-264,-48)):
+                    self.goto( 264, -48)
+                if ((self.xcor(),self.ycor()) == (264,-72)):
+                    self.goto(- 264, -72)
+                if ((self.xcor(),self.ycor()) == (264,-96)):
+                    self.goto(- 264, -96)
+                if ((self.xcor(),self.ycor()) == (264,-120)):
+                    self.goto(- 264, -120)
 
                 if self.direction == "left":
                     x = -24
@@ -352,8 +358,8 @@ def init_game(name_level, map_level, agent, n_episode):
                 
                 #semaphore green
                 else:
-                    if self.xcor()>=-48 and self.xcor()<=24 and self.direction == "left":
-                        self.goto(24, self.ycor())
+                    if self.xcor()>=-48 and self.xcor()<=0 and self.direction == "left":
+                        self.goto(0, self.ycor())
                     elif self.xcor()>=-72 and self.xcor()<=0 and self.direction == "right":
                         self.goto(-72, self.ycor())
                     else:
