@@ -81,6 +81,7 @@ def init_game(name_level, map_level, agent, n_episode):
         semaphores = []
         side_pos = []
         cars = []
+        available_pos = []
 
         start = time.time()
 
@@ -462,10 +463,10 @@ def init_game(name_level, map_level, agent, n_episode):
                         pen.goto(position_x, position_y)
                         pen.stamp()
                         walls.append((position_x, position_y))
-                    elif character == "T":
-                        treasures.append(Treasure(position_x, position_y))
-                    elif character == "H":
-                        bones.goto(position_x, position_y)
+                    #elif character == "T":
+                        #treasures.append(Treasure(position_x, position_y))
+                    #elif character == "H":
+                        #bones.goto(position_x, position_y)
                     elif character == "B":
                         buttons.append(Button(position_x, position_y))
                         buttons_pos.append((position_x, position_y))
@@ -485,20 +486,21 @@ def init_game(name_level, map_level, agent, n_episode):
                     elif character == "Y":
                         crossroads.append(CrossRoad(position_x, position_y))
                     elif character == "S":
-                        semaphores.append(Semaphore(position_x, position_y))                
-            
-        
-        def setup_player_and_persons_and_cars(level):
+                        semaphores.append(Semaphore(position_x, position_y)) 
+                    elif character == "U":
+                        available_pos.append((position_x, position_y))
+
+        def setup_people_and_cars(level):
             for y in range(len(level)):
                 for x in range(len(level[y])):
                     character = level[y][x]
                     position_x = -456 + (x * 24)
                     position_y = 288 - (y * 24)
                     #player - dog
-                    if character == "P":
-                        player.goto(position_x, position_y)
+                    #if character == "P":
+                        #player.goto(position_x, position_y)
                     #people
-                    elif character == "E":
+                    if character == "E":
                         persons.append(Person(position_x, position_y))
                     #cars
                     elif character == "C":
@@ -509,7 +511,45 @@ def init_game(name_level, map_level, agent, n_episode):
                         cars.append(Car(position_x, position_y, 2))
                     elif character == "G":
                         cars.append(Car(position_x, position_y, 3))
+
+        def set_player_treasures_bones(name_level):
+            pos_treasure = []
+            pos_player = 0 
+            pos_bones = 0
+            nr = 0
+            if(name_level == "easy"):
+                nr = 5
+            elif(name_level == "medium"):
+                nr = 10
+            elif(name_level == "hard"):
+                nr = 15
+
+            while True:
+                if(name_level == "medium"):
+                    #por o player sempre assim na porta
+                    y_door_pos = doors_pos[0][1]
+                    while True:
+                        pos_player = random.choice(available_pos)
+                        if pos_player[1] > y_door_pos:
+                            break
+                else:
+                    pos_player = random.choice(available_pos)
+
+                pos_bones = random.choice(available_pos)
                 
+                for j in range(nr):
+                    pos_treasure.append(random.choice(available_pos)) 
+
+                if(pos_player != pos_bones):
+                    break
+            
+            player.goto(pos_player)
+            bones.goto(pos_bones)
+            for j in range(nr):
+                aux = pos_treasure[j]
+                treasures.append(Treasure(aux[0],aux[1]))
+
+        
         #create instance
         pen = Pen()
         bones = Bones()
@@ -526,8 +566,11 @@ def init_game(name_level, map_level, agent, n_episode):
         setup_maze(map_level)
 
         player = Player()
-        #set up player
-        setup_player_and_persons_and_cars(map_level)
+        #set up people and cars
+        setup_people_and_cars(map_level)
+
+        #set up player, treaudres and bone
+        set_player_treasures_bones(name_level)
 
         #keyboard bindding
         #turtle.listen()
