@@ -365,7 +365,7 @@ def init_game(name_level, map_level, agent, n_episode):
                     else:
                         self.goto(move_to_x, move_to_y)
 
-                turtle.ontimer(self.move_cars, t = random.randint(100, 500))
+                #turtle.ontimer(self.move_cars, t = random.randint(100, 500))
 
             def destroy(self):
                 self.goto(2000, 2000)
@@ -452,7 +452,7 @@ def init_game(name_level, map_level, agent, n_episode):
 
                 if not can_move(move_to_x, move_to_y, self, True):
                     self.direction = random.choice(["up", "down", "left", "right"])
-                turtle.ontimer(self.move, t = random.randint(100, 500))
+                #turtle.ontimer(self.move, t = random.randint(50, 100))
 
             def destroy(self):
                 self.goto(2000, 2000)
@@ -586,12 +586,12 @@ def init_game(name_level, map_level, agent, n_episode):
         #turtle.onkey(player.left, "Left")
 
         #run person
-        for person in persons:
-            turtle.ontimer(person.move, 250)
+        #for person in persons:
+            #turtle.ontimer(person.move, 150)
         
         #run cars
-        for car in cars:
-            turtle.ontimer(car.move_cars, 250)
+        #for car in cars:
+            #turtle.ontimer(car.move_cars, 250)
         
         #run semaphore
         for sem in semaphores:
@@ -686,11 +686,11 @@ def init_game(name_level, map_level, agent, n_episode):
                     pos_treasure.append(button_pos)
             return pos_treasure
         
-        def roads_to_positions():
-            pos_roads = []
-            for road in roads:
-                pos_roads.append([road.xcor(),road.ycor()])
-            return pos_roads
+        def to_positions(obj_list):
+            pos = []
+            for obj in obj_list:
+                pos.append([obj.xcor(),obj.ycor()])
+            return pos
 
         def step(action):
             next_obs = []
@@ -740,8 +740,14 @@ def init_game(name_level, map_level, agent, n_episode):
                     agent._exploration_rate = agent._exploration_rate - 0.30
         
         while not terminal:
+            for person in persons:
+                person.move()
+            
+            for car in cars:
+                car.move_cars()
+
             agent.see(observation)
-            action = agent.action(player.xcor(),player.ycor(),walls, roads_to_positions())
+            action = agent.action(player.xcor(),player.ycor(),walls, to_positions(roads), to_positions(persons))
             next_obs, reward, terminal = step(action)
             if agent.train():
                 agent.next(observation, action, next_obs, reward, terminal)               
