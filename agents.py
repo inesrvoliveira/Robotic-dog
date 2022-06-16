@@ -202,9 +202,16 @@ class QLearningAgent(Agent):
         self._exploration_rate = exploration_rate
         self.n_actions = N_ACTIONS
         super(QLearningAgent, self).__init__("Q-Learning")
+
+    def can_cross(self, actions, sides_pos, crossroads_pos, sem, agent_position):
+        #------ does he want to cross ------------
+        if(tuple(agent_position) in sides_pos and sem == 0):
+            #print("he wants CROSSING!!!!!!!!!!!!!!!!")
+            return [STAY]
+        return actions
     
     def action(self, x, y, walls_pos, roads_pos, people_pos,sides_pos, crossroads_pos, sem, exploration = True) -> int:
-
+        d = 0
         agent_position = [x, y]
         position = tuple(agent_position)
         #Access Q-Values for current observation
@@ -220,6 +227,8 @@ class QLearningAgent(Agent):
             actions = range(self.n_actions)
             # print("checke walls:-------------------------------")
             #actions = self.theres_wall(actions, agent_position, walls_pos)
+
+        actions = self.can_cross(actions, sides_pos, crossroads_pos, sem, agent_position)
 
         return np.random.choice(actions)
 

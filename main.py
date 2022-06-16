@@ -140,8 +140,8 @@ def main():
 
     # Setup agents
     agents = [    
-        RandomAgent(),
-        GreedyAgent(),
+        #RandomAgent(),
+        #GreedyAgent(),
         QLearningAgent()
     ]
    
