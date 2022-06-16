@@ -100,6 +100,7 @@ def run_loop_single(lvl, map, agent, n_evaluations, n_episodes):
     for evaluation in range(n_evaluations):
         result = run_game(lvl, map, agent, n_episodes)
         results[evaluation] = result
+    return results
 
 
 def run_game(lvl, map, agent, n_episodes):
@@ -152,22 +153,23 @@ def main():
             results = {}
             for agent in agents:
                 if self.level == "easy.gif":
-                    result = run_game("easy", map_easy, agent, 7)
-                    #result = run_loop_single("easy", map_easy, agent, 1, 1)
+                    #result = run_game("easy", map_easy, agent, 3)
+                    result = run_loop_single("easy", map_easy, agent, 3, 7)
                     results[agent.name] = result
                 elif self.level == "medium.gif":
-                    result = run_game("medium", map_medium, agent, 7)
-                    #result = run_loop_single("medium", map_medium, agent, 1, 1)
+                    #result = run_game("medium", map_medium, agent, 3)
+                    result = run_loop_single("medium", map_medium, agent, 2, 1)
                     results[agent.name] = result
                 elif self.level == "hard.gif":
-                    result = run_game("hard", map_hard, agent, 7)
-                    #result = run_loop_single("hard", map_hard, agent, 1, 1)
+                    #result = run_game("hard", map_hard, agent, 3)
+                    result = run_loop_single("hard", map_hard, agent, 2, 1)
                     results[agent.name] = result
                 else: #exit
                     turtle.bye()
             # Compare results
             print(results)
-            compare_results(results, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
+            #compare_results(results, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
+            compare_results_learning(results, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
 
 
     # add level
