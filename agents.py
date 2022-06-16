@@ -195,7 +195,7 @@ class GreedyAgent(Agent):
 
 class QLearningAgent(Agent):
 
-    def __init__(self, learning_rate = 0.3, discount_factor = 0.99, exploration_rate = 1, initial_q_values = 0):
+    def __init__(self, learning_rate = 0.6, discount_factor = 0.8, exploration_rate = 1, initial_q_values = 0):
         self._Q = defaultdict(lambda: np.ones(N_ACTIONS) * initial_q_values)
         self._learning_rate = learning_rate
         self._discount_factor = discount_factor
