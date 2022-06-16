@@ -135,10 +135,10 @@ def init_game(name_level, map_level, agent, n_episode):
         def is_edge_space(move_to_x, move_to_y):
             return (move_to_x, move_to_y) == (- 264,24) or (move_to_x, move_to_y) == (- 264,-144) or (move_to_x, move_to_y) == ( 264,-144) or (move_to_x, move_to_y) == ( 264,24)
 
-        def can_move(move_to_x, move_to_y, player, isPerson):
+        def can_move(move_to_x, move_to_y, player, isPerson, player_x, player_y):
             if (move_to_x, move_to_y) not in walls and (move_to_x, move_to_y) not in doors_pos and not is_edge_space(move_to_x, move_to_y) and not is_road(move_to_x, move_to_y) :
                 if isPerson:
-                    if (move_to_x, move_to_y) not in side_pos:
+                    if (move_to_x, move_to_y) not in side_pos and (move_to_x, move_to_y) != (player_x, player_y):
                         player.goto(move_to_x, move_to_y)
                         return True  
                     else:
@@ -172,7 +172,7 @@ def init_game(name_level, map_level, agent, n_episode):
                 self.shape(top)
                 move_to_x = self.xcor()
                 move_to_y = self.ycor() + 24
-                can_move(move_to_x, move_to_y, self, False)
+                can_move(move_to_x, move_to_y, self, False,0,0)
                 self.n_steps += 1
                 #show_score(timer, self.n_steps, self.hp)
 
@@ -180,7 +180,7 @@ def init_game(name_level, map_level, agent, n_episode):
                 self.shape(bottom)
                 move_to_x = self.xcor()
                 move_to_y = self.ycor() - 24
-                can_move(move_to_x, move_to_y, self, False)
+                can_move(move_to_x, move_to_y, self, False,0,0)
                 self.n_steps += 1
                 #show_score(timer, self.n_steps, self.hp)
                 
@@ -188,7 +188,7 @@ def init_game(name_level, map_level, agent, n_episode):
                 self.shape(left)
                 move_to_x = self.xcor() - 24
                 move_to_y = self.ycor()
-                can_move(move_to_x, move_to_y, self, False)
+                can_move(move_to_x, move_to_y, self, False,0,0)
                 self.n_steps += 1
                 #show_score(timer, self.n_steps, self.hp)
                 
@@ -196,7 +196,7 @@ def init_game(name_level, map_level, agent, n_episode):
                 self.shape(right)
                 move_to_x = self.xcor() + 24
                 move_to_y = self.ycor()
-                can_move(move_to_x, move_to_y, self, False)
+                can_move(move_to_x, move_to_y, self, False,0,0)
                 self.n_steps += 1
                 #show_score(timer, self.n_steps, self.hp)
 
@@ -430,7 +430,7 @@ def init_game(name_level, map_level, agent, n_episode):
                 self.goto(x, y)
                 self.direction = random.choice(["up", "down", "left", "right"])
 
-            def move(self):
+            def move(self, player_x,player_y):
                 if self.direction == "up":
                     self.shape(image_people[3])
                     x = 0
@@ -450,7 +450,7 @@ def init_game(name_level, map_level, agent, n_episode):
                 move_to_x = self.xcor() + x
                 move_to_y = self.ycor() + y
 
-                if not can_move(move_to_x, move_to_y, self, True):
+                if not can_move(move_to_x, move_to_y, self, True,player_x,player_y):
                     self.direction = random.choice(["up", "down", "left", "right"])
                 #turtle.ontimer(self.move, t = random.randint(50, 100))
 
@@ -741,13 +741,17 @@ def init_game(name_level, map_level, agent, n_episode):
         
         while not terminal:
             for person in persons:
-                person.move()
+                person.move(player.xcor(),player.ycor())
             
             for car in cars:
                 car.move_cars()
 
             agent.see(observation)
-            action = agent.action(player.xcor(),player.ycor(),walls, to_positions(roads), to_positions(persons))
+            if(name_level == "hard"):
+                action = agent.action(player.xcor(),player.ycor(),walls, to_positions(roads), to_positions(persons), side_pos, to_positions(crossroads), semaphores[0].image)
+            else:
+                action = agent.action(player.xcor(),player.ycor(),walls, to_positions(roads), to_positions(persons),[], [], 100)
+
             next_obs, reward, terminal = step(action)
             if agent.train():
                 agent.next(observation, action, next_obs, reward, terminal)               
