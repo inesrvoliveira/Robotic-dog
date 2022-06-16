@@ -7,34 +7,35 @@ from aasma import agent
 import game_easy
 import numpy as np
 from agents import RandomAgent, GreedyAgent, QLearningAgent
+from aasma.utils import compare_results_learning, compare_results
 
 map_easy = [
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXP X   EXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXX X X TXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXX X X  XXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXX X X  TXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXT   T  HXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "            XXXXXXXXXX                 ",
+    "            XP     EXX                 ",
+    "            XX X X TXX                 ",
+    "            XX X X  XX                 ",
+    "            XX X X  TX                 ",
+    "            XT   T  HX                 ",
+    "            XXXXXXXXXX                 ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       ",
+    "                                       "
 ]
 
 map_medium = [
@@ -95,13 +96,22 @@ map_hard = [
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 ]
 
-def run_game(lvl, map, n_episodes):
+def run_loop_single(lvl, map, agent, n_evaluations, n_episodes):
+    
+    results = np.zeros((n_evaluations, n_episodes))
+
+    for evaluation in range(n_evaluations):
+        result = run_game(lvl, map, agent, n_episodes)
+        results[evaluation] = result
+
+
+def run_game(lvl, map, agent, n_episodes):
     results = np.zeros(n_episodes)
 
     for episode in range(n_episodes):
         turtle.clearscreen()
         time.sleep(0.5)
-        r = game_easy.init_game(lvl, map,episode)
+        r = game_easy.init_game(lvl, map, agent, episode)
         results[episode] = r #steps?
     print("results:--------------------------")
     print(results)
@@ -121,13 +131,13 @@ def main():
     screen.addshape(hard)
     screen.addshape(exit)
 
-    # 2 - Setup agents
-    agents = [
-        QLearningAgent(),     
+    # Setup agents
+    agents = [    
         RandomAgent(),
-        GreedyAgent()
+        GreedyAgent(),
+        QLearningAgent()
     ]
-
+   
     # create level
     class Level(turtle.Turtle):
 
@@ -142,14 +152,26 @@ def main():
             self.onclick(self.play_game)
 
         def play_game(self, x, y):
-            if self.level == "easy.gif":
-                run_game("easy", map_easy, 10)
-            elif self.level == "medium.gif":
-                run_game("medium", map_medium, 10)
-            elif self.level == "hard.gif":
-                run_game("hard", map_hard, 10)
-            else: #exit
-                turtle.bye()
+            results = {}
+            for agent in agents:
+                if self.level == "easy.gif":
+                    result = run_game("easy", map_easy, agent, 7)
+                    #result = run_loop_single("easy", map_easy, agent, 1, 1)
+                    results[agent.name] = result
+                elif self.level == "medium.gif":
+                    result = run_game("medium", map_medium, agent, 7)
+                    #result = run_loop_single("medium", map_medium, agent, 1, 1)
+                    results[agent.name] = result
+                elif self.level == "hard.gif":
+                    result = run_game("hard", map_hard, agent, 7)
+                    #result = run_loop_single("hard", map_hard, agent, 1, 1)
+                    results[agent.name] = result
+                else: #exit
+                    turtle.bye()
+            # Compare results
+            print(results)
+            compare_results(results, title="Agents on 'Blindoff' Environment", colors=["blue", "orange", "green"])
+
 
     # add level
     level_easy = Level(easy, 20)

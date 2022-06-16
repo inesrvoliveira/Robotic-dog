@@ -16,7 +16,7 @@ def init_screen():
     screen.setup(1000, 750)
     screen.tracer(0)
 
-def init_game(name_level, map_level, n_episode):
+def init_game(name_level, map_level, agent, n_episode):
     #try:
         init_screen()
 
@@ -516,11 +516,11 @@ def init_game(name_level, map_level, n_episode):
         logo = LogoBlindoff()
         
         #Agents
-        randomAgent = agents.RandomAgent()
-        greedyAgent = agents.GreedyAgent()
-        qLearningAgent = agents.QLearningAgent()
+        # randomAgent = agents.RandomAgent()
+        # greedyAgent = agents.GreedyAgent()
+        # qLearningAgent = agents.QLearningAgent()
 
-        agent = qLearningAgent
+        # agent = qLearningAgent
         
         #set up level
         setup_maze(map_level)
