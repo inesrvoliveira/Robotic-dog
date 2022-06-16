@@ -685,6 +685,12 @@ def init_game(name_level, map_level, agent, n_episode):
                 for button_pos in buttons_pos:
                     pos_treasure.append(button_pos)
             return pos_treasure
+        
+        def roads_to_positions():
+            pos_roads = []
+            for road in roads:
+                pos_roads.append([road.xcor(),road.ycor()])
+            return pos_roads
 
         def step(action):
             next_obs = []
@@ -735,7 +741,7 @@ def init_game(name_level, map_level, agent, n_episode):
         
         while not terminal:
             agent.see(observation)
-            action = agent.action(player.xcor(),player.ycor(),walls)
+            action = agent.action(player.xcor(),player.ycor(),walls, roads_to_positions())
             next_obs, reward, terminal = step(action)
             if agent.train():
                 agent.next(observation, action, next_obs, reward, terminal)               

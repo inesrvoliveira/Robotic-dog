@@ -17,7 +17,7 @@ class RandomAgent(Agent):
         super(RandomAgent, self).__init__("Random Agent")
         self.n_actions = N_ACTIONS
 
-    def action(self, x, y, walls_pos) -> int:
+    def action(self, x, y, walls_pos, roads_pos) -> int:
         return np.random.randint(self.n_actions)
 
     def next(self, observation, action, next_observation, reward, terminal, info):
@@ -35,7 +35,14 @@ class GreedyAgent(Agent):
         super(GreedyAgent, self).__init__(f"Greedy Agent")
         self.n_actions = N_ACTIONS
     
-    def theres_wall(self, d, agent_position, walls_pos):
+    def find_way(self,can_move,  seq):
+        aux = 0
+        while True:
+            aux = random.choice(seq)
+            if(can_move[aux]):
+                return aux
+
+    def theres_wall_road(self, d, agent_position, walls_pos, roads_pos):
         d_down = (agent_position[0], agent_position[1]-24)
         d_left = (agent_position[0]-24, agent_position[1])
         d_right = (agent_position[0]+24, agent_position[1])
@@ -45,7 +52,7 @@ class GreedyAgent(Agent):
         can_move = []
         
         for i in range(len(surroundings)):
-            if(surroundings[i] in walls_pos):
+            if(surroundings[i] in walls_pos or surroundings[i] in roads_pos):
                 can_move.append(False)
             else:
                 can_move.append(True)
@@ -61,27 +68,31 @@ class GreedyAgent(Agent):
             if(d == DOWN):
                 print("devolvi aqui2222222222!!!!!!!!!!")
                 print(can_move)
-                if(can_move[RIGHT]): return RIGHT
-                if(can_move[LEFT]): return LEFT
-                if(can_move[UP]): return UP
+                #if(can_move[RIGHT]): return RIGHT
+                #if(can_move[LEFT]): return LEFT
+                #if(can_move[UP]): return UP
+                return self.find_way(can_move, [RIGHT, LEFT, UP, STAY])
             
             if(d == RIGHT):
-                if(can_move[DOWN]): return DOWN
-                if(can_move[LEFT]): return LEFT
-                if(can_move[UP]): return UP
+                #if(can_move[DOWN]): return DOWN
+                #if(can_move[LEFT]): return LEFT
+                #if(can_move[UP]): return UP
+                return self.find_way(can_move, [DOWN, LEFT, UP, STAY])
             
             if(d == LEFT):
-                if(can_move[UP]): return UP
-                if(can_move[DOWN]): return DOWN
-                if(can_move[RIGHT]): return RIGHT
+                #if(can_move[UP]): return UP
+                #if(can_move[DOWN]): return DOWN
+                #if(can_move[RIGHT]): return RIGHT
+                return self.find_way(can_move, [RIGHT, DOWN, UP, STAY])
             
             if(d == UP):
-                if(can_move[LEFT]): return LEFT
-                if(can_move[RIGHT]): return RIGHT
-                if(can_move[DOWN]): return DOWN
+                #if(can_move[LEFT]): return LEFT
+                #if(can_move[RIGHT]): return RIGHT
+                #if(can_move[DOWN]): return DOWN
+                return self.find_way(can_move, [RIGHT, DOWN, LEFT, STAY])
 
 
-    def action(self,x,y, walls_pos) -> int:
+    def action(self,x,y, walls_pos, roads_pos) -> int:
         treasure_positions = self.observation
         print("treasure positions:-------------------------------")
         print(treasure_positions)
@@ -101,7 +112,7 @@ class GreedyAgent(Agent):
             print(self.direction_to_go(agent_position, closest_treasure))
             d = self.direction_to_go(agent_position, closest_treasure)
             print("checke walls:-------------------------------")
-            d = self.theres_wall(d, agent_position, walls_pos)
+            d = self.theres_wall_road(d, agent_position, walls_pos,roads_pos)
             print(d)
             return d
         else:
@@ -174,7 +185,7 @@ class QLearningAgent(Agent):
         self.n_actions = N_ACTIONS
         super(QLearningAgent, self).__init__("Q-Learning")
     
-    def action(self, x, y, walls_pos, exploration = True) -> int:
+    def action(self, x, y, walls_pos, roads_pos, exploration = True) -> int:
 
         agent_position = [x, y]
         position = tuple(agent_position)
