@@ -42,7 +42,7 @@ class GreedyAgent(Agent):
             if(can_move[aux]):
                 return aux
 
-    def theres_wall_road(self, d, agent_position, walls_pos, roads_pos):
+    def theres_wall_road(self, d, agent_position, walls_pos, roads_pos,people_pos):
         d_down = (agent_position[0], agent_position[1]-24)
         d_left = (agent_position[0]-24, agent_position[1])
         d_right = (agent_position[0]+24, agent_position[1])
@@ -50,9 +50,10 @@ class GreedyAgent(Agent):
         
         surroundings = [d_down,d_left,d_up,d_right]
         can_move = []
-        
+        print("PEOPLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+        print(people_pos)
         for i in range(len(surroundings)):
-            if(surroundings[i] in walls_pos or surroundings[i] in roads_pos):
+            if(surroundings[i] in walls_pos or surroundings[i] in roads_pos or surroundings[i] in people_pos):
                 can_move.append(False)
             else:
                 can_move.append(True)
@@ -92,7 +93,7 @@ class GreedyAgent(Agent):
                 return self.find_way(can_move, [RIGHT, DOWN, LEFT, STAY])
 
 
-    def action(self,x,y, walls_pos, roads_pos) -> int:
+    def action(self,x,y, walls_pos, roads_pos, people_pos) -> int:
         treasure_positions = self.observation
         print("treasure positions:-------------------------------")
         print(treasure_positions)
@@ -112,7 +113,8 @@ class GreedyAgent(Agent):
             print(self.direction_to_go(agent_position, closest_treasure))
             d = self.direction_to_go(agent_position, closest_treasure)
             print("checke walls:-------------------------------")
-            d = self.theres_wall_road(d, agent_position, walls_pos,roads_pos)
+            d = self.theres_wall_road(d, agent_position, walls_pos,roads_pos,people_pos)
+
             print(d)
             return d
         else:

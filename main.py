@@ -42,17 +42,17 @@ map_medium = [
     "                                       ",
     "                                       ",
     "          XXXXXXXXXXXXXXX              ",
-    "          XXXX UU XXXXXXX              ",
+    "          XXXXEUU XXXXXXX              ",
     "          XXXX XXUUXXXXXX              ",
     "          XXX UXXUUXXXXXX              ",
-    "          XXX UUUUUBDUUXX              ",
+    "          XXXEUUUUUBDUUXX              ",
     "          XXXUXXXUUUXXXXX              ",
     "          XXXUXXXUXUXXXXX              ",
     "          XXXUXXXU UXXXXX              ",
     "          XXXUXXX XUXXXXX              ",
-    "          XXXUU U X XXXXX              ",
+    "          XXXUUEU X XXXXX              ",
     "          XXXUUUUUU XXXXX              ",
-    "          XXXUU XXX XXXXX              ",
+    "          XXXUU XXXEXXXXX              ",
     "          XXXUUXXXXUXXXXX              ",
     "          XXXUUXXXXUXXXXX              ",
     "          XXXUUUXXXUXXXXX              ",
@@ -131,9 +131,9 @@ def main():
 
     # Setup agents
     agents = [    
-        RandomAgent(),
+        #RandomAgent(),
         GreedyAgent(),
-        QLearningAgent()
+        #QLearningAgent()
     ]
    
     # create level
