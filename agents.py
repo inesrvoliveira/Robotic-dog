@@ -17,7 +17,7 @@ class RandomAgent(Agent):
         super(RandomAgent, self).__init__("Random Agent")
         self.n_actions = N_ACTIONS
 
-    def action(self, x, y, walls_pos, roads_pos) -> int:
+    def action(self, x, y, walls_pos, roads_pos, people_pos) -> int:
         return np.random.randint(self.n_actions)
 
     def next(self, observation, action, next_observation, reward, terminal, info):
@@ -187,7 +187,7 @@ class QLearningAgent(Agent):
         self.n_actions = N_ACTIONS
         super(QLearningAgent, self).__init__("Q-Learning")
     
-    def action(self, x, y, walls_pos, roads_pos, exploration = True) -> int:
+    def action(self, x, y, walls_pos, roads_pos, people_pos, exploration = True) -> int:
 
         agent_position = [x, y]
         position = tuple(agent_position)

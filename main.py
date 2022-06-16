@@ -131,9 +131,9 @@ def main():
 
     # Setup agents
     agents = [    
-        #RandomAgent(),
+        RandomAgent(),
         GreedyAgent(),
-        #QLearningAgent()
+        QLearningAgent()
     ]
    
     # create level
