@@ -9,6 +9,12 @@ import numpy as np
 from agents import RandomAgent, GreedyAgent, QLearningAgent
 from aasma.utils import compare_results_learning, compare_results
 
+#number of episodes
+n_epi = 10
+
+#number of evaluations
+n_eval = 10
+
 map_easy = [
     "                                       ",
     "                                       ",
@@ -168,7 +174,7 @@ def main():
             for agent in agents:
                 if self.level == "easy.gif":
                     #result = run_game("easy", map_easy, agent, 3)
-                    results_steps, result_steps, results_time, result_time, results_score, result_score = run_loop_single("easy", map_easy, agent, 10, 10)
+                    results_steps, result_steps, results_time, result_time, results_score, result_score = run_loop_single("easy", map_easy, agent, n_eval, n_epi)
                     results_steps_evaluation[agent.name] = results_steps
                     results_steps_episode[agent.name] = result_steps
                     results_time_evaluation[agent.name] = results_time
@@ -177,7 +183,7 @@ def main():
                     results_score_episode[agent.name] = result_score
                 elif self.level == "medium.gif":
                     #result = run_game("medium", map_medium, agent, 3)
-                    results_steps, result_steps, results_time, result_time, results_score, result_score = run_loop_single("medium", map_medium, agent, 10, 10)
+                    results_steps, result_steps, results_time, result_time, results_score, result_score = run_loop_single("medium", map_medium, agent, n_eval, n_epi)
                     results_steps_evaluation[agent.name] = results_steps
                     results_steps_episode[agent.name] = result_steps
                     results_time_evaluation[agent.name] = results_time
@@ -186,7 +192,7 @@ def main():
                     results_score_episode[agent.name] = result_score
                 elif self.level == "hard.gif":
                     #result = run_game("hard", map_hard, agent, 3)
-                    results_steps, result_steps, results_time, result_time, results_score, result_score = run_loop_single("hard", map_hard, agent, 10, 10)
+                    results_steps, result_steps, results_time, result_time, results_score, result_score = run_loop_single("hard", map_hard, agent, n_eval, n_epi)
                     results_steps_evaluation[agent.name] = results_steps
                     results_steps_episode[agent.name] = result_steps
                     results_time_evaluation[agent.name] = results_time
