@@ -124,7 +124,7 @@ def run_game(lvl, map, agent, n_episodes):
         time.sleep(0.5)
         results_steps[episode], results_time[episode], results_score[episode] = game_easy.init_game(lvl, map, agent, episode)
                 
-    print("results:--------------------------")
+    print("-------------------------results:--------------------------")
     print(results_steps)
     print(results_time)
     print(results_score)

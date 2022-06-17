@@ -637,8 +637,6 @@ def init_game(name_level, map_level, agent, n_episode):
                 button = buttons[i]
                 if player.is_collision(button):
                     c+=1
-                    #print("estou em cima do button")
-                    #print(c)
                     button.change_button()
                     doors[i].opens()
         

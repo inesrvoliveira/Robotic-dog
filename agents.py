@@ -38,7 +38,6 @@ class GreedyAgent(Agent):
     def can_cross(self, d, sides_pos, crossroads_pos,sem, agent_position):
         #------ is he crossing already------------
         if(agent_position in crossroads_pos):
-            #print("he is CROSSING!!!!!!!!!!!!!!!!")
             if d == RIGHT:
                 return DOWN
             if d == LEFT:
@@ -47,7 +46,6 @@ class GreedyAgent(Agent):
                 return d
         #------ does he want to cross ------------
         if(tuple(agent_position) in sides_pos and sem == 0):
-            #print("he wants CROSSING!!!!!!!!!!!!!!!!")
             return STAY
         return d
 
@@ -75,13 +73,10 @@ class GreedyAgent(Agent):
         can_move.append(True)
 
         if(can_move[d]):
-            #print("devolvi aqui!!!!!!!!!!")
-            #print(can_move)
             return d
         else:
             #choose the preference way if there's a wall
             if(d == DOWN):
-                #print("devolvi aqui2222222222!!!!!!!!!!")
                 #print(can_move)
                 #if(can_move[RIGHT]): return RIGHT
                 #if(can_move[LEFT]): return LEFT
@@ -109,29 +104,19 @@ class GreedyAgent(Agent):
 
     def action(self,x,y, walls_pos, roads_pos, people_pos, sides_pos, crossroads_pos, sem) -> int:
         treasure_positions = self.observation
-        #print("treasure positions:-------------------------------")
-        #print(treasure_positions)
-
         agent_position = [x,y]
-        #print("agent:-------------------------------")
-        #print(agent_position)
-
         closest_treasure = self.closest_treasure(agent_position, treasure_positions)
-        #print("closest_treasure:-------------------------------")
-        #print(closest_treasure)
 
         treasure_found = closest_treasure is not None
 
         if treasure_found:
-            #print("direction_to_go:-------------------------------")
-            #print(self.direction_to_go(agent_position, closest_treasure))
+            
             d = self.direction_to_go(agent_position, closest_treasure)
-            #print("checke walls:-------------------------------")
+            
             d = self.theres_wall_road(d, agent_position, walls_pos,roads_pos,people_pos)
 
             d = self.can_cross(d, sides_pos, crossroads_pos, sem, agent_position)
 
-            #print(d)
             return d
         else:
             return random.randrange(N_ACTIONS)
@@ -206,7 +191,6 @@ class QLearningAgent(Agent):
     def can_cross(self, actions, sides_pos, crossroads_pos, sem, agent_position):
         #------ does he want to cross ------------
         if(tuple(agent_position) in sides_pos and sem == 0):
-            #print("he wants CROSSING!!!!!!!!!!!!!!!!")
             return [STAY]
         return actions
     
@@ -220,13 +204,9 @@ class QLearningAgent(Agent):
         if not self.training or (self.training and np.random.uniform(0, 1) > self._exploration_rate):
             # Exploit
             actions = np.argwhere(q_values == np.max(q_values)).reshape(-1)
-            # print("checke walls:-------------------------------")
-            #actions = self.theres_wall(actions, agent_position, walls_pos)
         else:
             # Explore
             actions = range(self.n_actions)
-            # print("checke walls:-------------------------------")
-            #actions = self.theres_wall(actions, agent_position, walls_pos)
 
         actions = self.can_cross(actions, sides_pos, crossroads_pos, sem, agent_position)
 
