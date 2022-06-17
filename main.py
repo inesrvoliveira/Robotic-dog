@@ -1,4 +1,4 @@
-#thaycacac
+
 import turtle
 import math
 import random
@@ -140,8 +140,8 @@ def main():
 
     # Setup agents
     agents = [    
-        #RandomAgent(),
-        #GreedyAgent(),
+        RandomAgent(),
+        GreedyAgent(),
         QLearningAgent()
     ]
    
@@ -227,7 +227,7 @@ def main():
     screen.tracer(0)
 
     #screen.listen()
-    time.sleep(2)
+    time.sleep(1)
 
 
 main()
