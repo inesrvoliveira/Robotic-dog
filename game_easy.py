@@ -628,6 +628,7 @@ def init_game(name_level, map_level, agent, n_episode):
             for car in cars:
                 if player.is_collision(car):
                     #player_dead()
+                    player.hp = 0
                     return True
             return False
 
