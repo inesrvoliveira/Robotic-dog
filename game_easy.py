@@ -133,7 +133,7 @@ def init_game(name_level, map_level, agent, n_episode):
             return False
 
         def is_edge_space(move_to_x, move_to_y):
-            return (move_to_x, move_to_y) == (- 264,24) or (move_to_x, move_to_y) == (- 264,-144) or (move_to_x, move_to_y) == ( 264,-144) or (move_to_x, move_to_y) == ( 264,24)
+            return (move_to_x, move_to_y) == (-264,24) or (move_to_x, move_to_y) == (-264,-144) or (move_to_x, move_to_y) == (264,-144) or (move_to_x, move_to_y) == (264,24)
 
         def can_move(move_to_x, move_to_y, player, isPerson, player_x, player_y):
             if (move_to_x, move_to_y) not in walls and (move_to_x, move_to_y) not in doors_pos and not is_edge_space(move_to_x, move_to_y) and not is_road(move_to_x, move_to_y) :
@@ -335,14 +335,14 @@ def init_game(name_level, map_level, agent, n_episode):
                     self.goto( 264, 0)
                 if ((self.xcor(),self.ycor()) == (-264,-24)):
                     self.goto( 264, -24)
-                if ((self.xcor(),self.ycor()) == (-264,-48)):
-                    self.goto( 264, -48)
+                if ((self.xcor(),self.ycor()) == (-264,24)):
+                    self.goto( 264, 24)
                 if ((self.xcor(),self.ycor()) == (264,-72)):
-                    self.goto(- 264, -72)
+                    self.goto(-264, -72)
                 if ((self.xcor(),self.ycor()) == (264,-96)):
-                    self.goto(- 264, -96)
-                if ((self.xcor(),self.ycor()) == (264,-120)):
-                    self.goto(- 264, -120)
+                    self.goto(-264, -96)
+                if ((self.xcor(),self.ycor()) == (264,-48)):
+                    self.goto(-264, -48)
 
                 if self.direction == "left":
                     x = -24
@@ -745,6 +745,7 @@ def init_game(name_level, map_level, agent, n_episode):
             for person in persons:
                 person.move(player.xcor(),player.ycor())
             
+            #print(len(cars))
             for car in cars:
                 car.move_cars()
 
