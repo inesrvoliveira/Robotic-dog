@@ -32,3 +32,7 @@ you can comment the agents you don't want to see and just run again
 To change the number of episodes and the number of evaluations (for the q-learning agent), you can edit `main.py` and change the global variable corresponding to those:
 
 ![Robotic-dog](./screenshot/06.png)
+
+See our demo:
+
+https://youtu.be/cf7djuAIv_g?si=vFoCBkYlI1KS75oq
